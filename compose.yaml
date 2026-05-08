@@ -1,0 +1,16 @@
+﻿services:
+  gerenciamento_escolar:
+    image: gerenciamento_escolar
+    build:
+      context: .
+      dockerfile: Gerenciamento_Escolar/Dockerfile
+  db:
+    image: postgres-18-alpine3.23
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: escolaDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - persist_data:/var/lib/postgresql
