@@ -1,7 +1,18 @@
+using Gerenciamento_Escolar.Persistence;
+using Gerenciamento_Escolar.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<Context>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<AlocacaoUseCases>();
+builder.Services.AddScoped<DisciplinaUseCases>();
+builder.Services.AddScoped<LaboratorioUseCases>();
+builder.Services.AddScoped<AplicativoUseCases>();
+
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 

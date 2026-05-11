@@ -61,6 +61,36 @@ public class AlocacaoUseCases(Context context)
             alocacaoAtualizadaDto.status,
             alocacaoAtualizadaDto.aprovadoPorId,
             alocacaoAtualizadaDto.dataAprovacao, alocacaoAtualizadaDto.coordenadorId);
+
+        var pcs = context.Laboratorios
+            .Where(l => l.id == alocacaoAtualizadaDto.laboratorio_id)
+            .Select(l => l.qnt_computadores).FirstOrDefault();
+
+        var alunos = context.Disciplinas
+            .Where(d => d.id == alocacaoAtualizadaDto.disciplina_id)
+            .Select(d => d.alunos_matriculados).FirstOrDefault();
+
+        if ((alunos + pcs) > 2)
+        {
+            alocacaoAtualizada.status = nameof(StatusAlocacao.Negado);}
+
+        var appsrequeridos = context.DisciplinaAplicativos
+            .Where(da => da.disciplina_id == alocacaoAtualizadaDto.disciplina_id)
+            .Select(da => da.aplicativo_id).ToList();
+        if (!appsrequeridos.Any())
+        {
+            alocacaoAtualizada.status = nameof(StatusAlocacao.Aprovado);}
+
+        var appsnolab = context.LaboratorioAplicativos
+            .Where(la => la.laboratorio_id == alocacaoAtualizadaDto.laboratorio_id)
+            .Select(la => la.aplicativo_id).ToList();
+
+        bool appsestaoinstalados = appsrequeridos.All(r => appsnolab.Contains(r));
+        if (!appsestaoinstalados)
+        {
+            alocacaoAtualizada.status = nameof(StatusAlocacao.Negado);
+        }
+        
         context.Alocacoes.Update(alocacaoAtualizada);
         var alocacao = context.Alocacoes.Find(id);
         return alocacao;

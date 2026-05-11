@@ -36,7 +36,7 @@ public class Alocacao
 
     [Key]
     [Column(name:"id")]
-    private int id { get; set; }
+    public int id { get; private set; }
     
     [Column(name:"disciplina_id")]
     [ForeignKey(name:"disciplina.id")]
@@ -57,7 +57,7 @@ public class Alocacao
     TimeSpan horario_fim { get; set; }
     
     [Column(name: "status")]
-    string status { get; set; }
+    public string status { get; set; }
     
     [Column(name: "aprovado_por_id")]
     int aprovado_por_id { get; set; }

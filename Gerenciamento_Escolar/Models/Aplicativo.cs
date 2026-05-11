@@ -24,14 +24,17 @@ public class Aplicativo
 
     [Key]
     [Column(name:"id")]
-    private int id{ get; set; }
+    public int id{ get; set; }
     
     [Column(name:"nome")]
-    private string nome{ get; set; }
+    public string nome{ get; set; }
     
     [Column(name:"versao")]
-    private string versao{ get; set; }
+    public string versao{ get; set; }
     
     [Column(name:"descricao")]
-    private string descricao{ get; set; }
+    public string descricao{ get; set; }
+    
+    public virtual ICollection<Disciplina_Aplicativo> disciplinaAplicativos { get; set; }
+    public virtual ICollection<Laboratorio_Aplicativo> laboratorioAplicativos { get; set; }
 }

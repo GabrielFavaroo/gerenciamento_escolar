@@ -15,18 +15,18 @@ public class Usuario
     }
     [Key]
     [Column(name:"id")]
-    private int id { get; set; }
+    public int id { get; set; }
     
     [Column(name:"nome")]
-    private string nome{ get; set; }
+    public string nome{ get; set; }
     
     [Column(name:"email")]
-    private string email{ get; set; }
+    public string email{ get; set; }
     
     [Column(name:"senha")]
-    private string senha{ get; set; }
+    public string senha{ get; set; }
     
     [Column(name:"tipousuario")]
-    private string tipoUsuario{ get; set; }
+    public string tipoUsuario{ get; set; }
     
 }

@@ -5,17 +5,19 @@ namespace Gerenciamento_Escolar.Models;
 [Table("laboratorio_aplicativo")]
 public class Laboratorio_Aplicativo
 {
-    public Laboratorio_Aplicativo(int laboratorioId, int aplicativoId)
+    public Laboratorio_Aplicativo(int laboratorio_id, int aplicativo_id)
     {
-        laboratorio_id = laboratorioId;
-        aplicativo_id = aplicativoId;
+        this.laboratorio_id = laboratorio_id;
+        this.aplicativo_id = aplicativo_id;
     }
     
     [Column("laboratorio_id")]
     [ForeignKey("laboratorio.id")]
-    int laboratorio_id{ get; set; }
+    public int laboratorio_id{ get; private set; }
+    public virtual Laboratorio laboratorio { get; set; }
     
     [Column("aplicativo_id")]
     [ForeignKey("aplicativo.id")]
-    int aplicativo_id{ get; set; }
+    public int aplicativo_id{ get; private set; }
+    public virtual Aplicativo aplicativo { get; set; }
 }

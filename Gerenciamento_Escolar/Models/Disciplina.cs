@@ -6,38 +6,40 @@ namespace Gerenciamento_Escolar.Models;
 [Table(name:"disciplina")]
 public class Disciplina
 {
-    public Disciplina( string nome, int alunosMatriculados, string descricao, int coordenadorId)
+    public Disciplina( string nome, int alunos_matriculados, string descricao, int coordenador_id)
     {
         
         this.nome = nome;
-        alunos_matriculados = alunosMatriculados;
+        this.alunos_matriculados = alunos_matriculados;
         this.descricao = descricao;
-        coordenador_id = coordenadorId;
+        this.coordenador_id = coordenador_id;
     }
 
-    public Disciplina(int id, string nome, int alunosMatriculados, string descricao, int coordenadorId)
+    public Disciplina(int id, string nome, int alunos_matriculados, string descricao, int coordenador_id)
     {
         this.id = id;
         this.nome = nome;
-        alunos_matriculados = alunosMatriculados;
+        this.alunos_matriculados= alunos_matriculados;
         this.descricao = descricao;
-        coordenador_id = coordenadorId;
+        this.coordenador_id = coordenador_id;
     }
 
     [Key]
     [Column(name:"id")]
-    private int id{ get; set; }
+    public int id{ get; private set; }
     
     [Column(name:"nome")]
-    private string nome{ get; set; }
+    public string nome{ get; set; }
     
     [Column(name:"alunos_matriculados")]
-    private int alunos_matriculados{ get; set; }
+    public int alunos_matriculados{ get;  set; }
     
     [Column(name:"descricao")]
-    private string descricao{ get; set; }
+    public string descricao{ get; set; }
     
     [Column(name:"coordenador_id")]
-    private int coordenador_id{ get; set; }
+    public int coordenador_id{ get; set; }
+    
+    public virtual ICollection<Disciplina_Aplicativo> disciplinaAplicativos { get; set; }
 
 }

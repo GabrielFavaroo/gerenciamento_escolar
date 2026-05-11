@@ -13,20 +13,22 @@ public class Laboratorio
         qnt_computadores = qntComputadores;
     }
 
-    public Laboratorio(int id, string nome, int qntComputadores)
+    public Laboratorio(int id, string nome, int qnt_computadores)
     {
         this.id = id;
         this.nome = nome;
-        qnt_computadores = qntComputadores;
+        this.qnt_computadores = qnt_computadores;
     }
 
     [Key]
-    private int id{ get; set; }
+    public int id{ get; private set; }
     
     [Column(name:"nome")]
-    private string nome{ get; set; }
+    public string nome{ get; set; }
     
     [Column(name:"qnt_computadores")]
-    private int qnt_computadores{ get; set; }
-    
+    public int qnt_computadores{ get; private set; }
+
+    public virtual ICollection<Laboratorio_Aplicativo> laboratorioAplicativos { get; set; }
+
 }
