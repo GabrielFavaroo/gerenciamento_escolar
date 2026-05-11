@@ -26,6 +26,7 @@ public class Disciplina
 
     [Key]
     [Column(name:"id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int id{ get; private set; }
     
     [Column(name:"nome")]

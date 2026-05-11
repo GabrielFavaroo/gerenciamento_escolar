@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Gerenciamento_Escolar.Dtos;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gerenciamento_Escolar.Controllers;
@@ -19,6 +20,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     }
 
     [HttpGet]
+    [Authorize(Roles = "tecnico")]
     public IActionResult listarAplicativos([FromQuery(Name = "p")][DefaultValue(1)][Range(1,int.MaxValue)]int pagina,
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)
     {
@@ -27,12 +29,14 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     }
 
     [HttpPost]
+    [Authorize(Roles = "tecnico")]
     public IActionResult criarAplicativo(AplicativoDTO aplicativoDto)
     {
         return Created("aplicativo",aplicativoUseCases.criar(aplicativoDto));
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "tecnico")]
     public IActionResult deletarAplicativo([Range(1,int.MaxValue)]int id)
     {
         aplicativoUseCases.remover(id);
@@ -40,6 +44,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "tecnico")]
     public IActionResult atualizarAplicativo([Range(1,int.MaxValue)]int id,AplicativoDTO aplicativoDto)
     {
         return Ok(aplicativoUseCases.atualizar(id, aplicativoDto));

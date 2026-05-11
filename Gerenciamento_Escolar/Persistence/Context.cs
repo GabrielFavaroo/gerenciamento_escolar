@@ -16,6 +16,7 @@ public class Context : DbContext
     public DbSet<Laboratorio> Laboratorios;
     public DbSet<Aplicativo> Aplicativos;
     public DbSet<Disciplina> Disciplinas;
+    public DbSet<Usuario> Usuarios;
     public DbSet<Disciplina_Aplicativo> DisciplinaAplicativos;
     public DbSet<Laboratorio_Aplicativo> LaboratorioAplicativos;
  

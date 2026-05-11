@@ -15,6 +15,7 @@ public class Usuario
     }
     [Key]
     [Column(name:"id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int id { get; set; }
     
     [Column(name:"nome")]

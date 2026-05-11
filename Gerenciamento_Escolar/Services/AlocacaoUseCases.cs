@@ -22,7 +22,7 @@ public class AlocacaoUseCases(Context context)
             nameof(StatusAlocacao.Pendente),
             0,
             new DateTime(0,0,0),
-            0
+            alocacaoDto.coordenadorId
             );
         context.Alocacoes.Add(alocacao);
         return alocacao;
@@ -90,9 +90,15 @@ public class AlocacaoUseCases(Context context)
         {
             alocacaoAtualizada.status = nameof(StatusAlocacao.Negado);
         }
+
+        if (alocacaoAtualizada.status == nameof(StatusAlocacao.Aprovado))
+        {
+            alocacaoAtualizada.data_aprovacao = new DateTime();
+        }
         
         context.Alocacoes.Update(alocacaoAtualizada);
         var alocacao = context.Alocacoes.Find(id);
+        
         return alocacao;
     }
     

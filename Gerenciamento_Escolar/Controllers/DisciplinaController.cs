@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Gerenciamento_Escolar.Dtos;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gerenciamento_Escolar.Controllers;
@@ -27,12 +28,14 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     }
 
     [HttpPost]
+    [Authorize(Roles = "coordenador")]
     public IActionResult criarDisciplina(DisciplinaDTO disciplinaDto)
     {
         return Created("disciplina",disciplinaUseCases.criar(disciplinaDto));
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "coordenador")]
     public IActionResult deletarDisciplina([Range(1,int.MaxValue)]int id)
     {
         disciplinaUseCases.remover(id);
@@ -40,6 +43,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "coordenador")]
     public IActionResult atualizarDisciplina([Range(1,int.MaxValue)]int id,DisciplinaDTO disciplinaDto)
     {
         return Ok(disciplinaUseCases.atualizar(id, disciplinaDto));

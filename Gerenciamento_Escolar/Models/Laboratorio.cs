@@ -21,6 +21,8 @@ public class Laboratorio
     }
 
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Column(name:"id")]
     public int id{ get; private set; }
     
     [Column(name:"nome")]

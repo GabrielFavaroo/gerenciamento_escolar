@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Gerenciamento_Escolar.Dtos;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gerenciamento_Escolar.Controllers;
@@ -11,6 +12,7 @@ namespace Gerenciamento_Escolar.Controllers;
 [ApiController]
 public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Controller
 {
+    
     [HttpGet("{id:int}")]
     public IActionResult encontrarLaboratorioPorId([Range(1,int.MaxValue)]int id)
     {
@@ -27,12 +29,14 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     }
 
     [HttpPost]
+    [Authorize(Roles = "diretor")]
     public IActionResult criarLaboratorio(LaboratorioDTO laboratorioDto)
     {
         return Created("laboratorio", laboratorioUseCases.criar(laboratorioDto));
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "diretor")]
     public IActionResult deletarLaboratorio([Range(1,int.MaxValue)]int id)
     {
         laboratorioUseCases.remover(id);
@@ -40,6 +44,7 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "tecnico,diretor")]
     public IActionResult atualizarLaboratorio([Range(1,int.MaxValue)]int id,LaboratorioDTO laboratorioDto)
     {
         return Ok(laboratorioUseCases.atualizar(id, laboratorioDto));

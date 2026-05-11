@@ -7,4 +7,5 @@ public record AlocacaoDTO(
     [Range(1, int.MaxValue)] int laboratorio_id,
     string dia_da_semana,
     TimeSpan horario_inicio,
-    TimeSpan horario_fim);
+    TimeSpan horario_fim,
+    [Range(1, int.MaxValue)] int coordenadorId);

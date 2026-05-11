@@ -36,6 +36,7 @@ public class Alocacao
 
     [Key]
     [Column(name:"id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int id { get; private set; }
     
     [Column(name:"disciplina_id")]
@@ -63,7 +64,7 @@ public class Alocacao
     int aprovado_por_id { get; set; }
     
     [Column(name: "data_aprovacao")]
-    DateTime data_aprovacao { get; set; }
+    public DateTime data_aprovacao { get; set; }
     
     [Column(name: "data_aprovacao")]
     int coordenador_id { get; set; }
