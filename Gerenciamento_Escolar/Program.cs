@@ -1,9 +1,33 @@
+using System.Text;
 using Gerenciamento_Escolar.Infrastructure;
 using Gerenciamento_Escolar.Persistence;
 using Gerenciamento_Escolar.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAuthentication(auth =>{
+    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;}
+    ).AddJwtBearer(
+    be =>
+    {
+        be.RequireHttpsMetadata = false;
+    
+    be.SaveToken = true;
+    be.TokenValidationParameters = new TokenValidationParameters
+    {
+        IssuerSigningKey =
+            new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.encodingKey)),
+        ValidateIssuer = false,
+        ValidateAudience = false
+        
+    };
+
+    });
+builder.Services.AddAuthorization();
+
 builder.Services.AddTransient<TokenService>();
 builder.Services.AddDbContext<Context>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -18,6 +42,8 @@ builder.Services.AddScoped<UsuarioUseCases>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 // Configure the HTTP request pipeline.

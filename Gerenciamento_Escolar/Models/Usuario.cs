@@ -13,6 +13,13 @@ public class Usuario
         this.senha = senha;
         this.tipoUsuario = tipoUsuario;
     }
+
+    public Usuario(string nome, string senha)
+    {
+        this.nome = nome;
+        this.senha = senha;
+    }
+
     [Key]
     [Column(name:"id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
