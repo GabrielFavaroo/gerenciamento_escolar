@@ -24,10 +24,12 @@ public class TokenService(JwtSecurityTokenHandler handler,Context context)
         {
             throw new Exception(message: "Usuario ou senha incorretos");
         }
-        
-        
-        
-        
+
+        user = context.Usuarios.FirstOrDefault(u => u.nome == user.nome && u.senha == senhaInformada);
+
+        if (user == null)
+        {
+            throw new Exception("Usuario não encontrado");}
      
 
      var credentials = new SigningCredentials(new SymmetricSecurityKey(key),
