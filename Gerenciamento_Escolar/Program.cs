@@ -32,11 +32,18 @@ builder.Services.AddTransient<JwtSecurityTokenHandler>();
 builder.Services.AddTransient<TokenService>();
 builder.Services.AddDbContext<Context>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
 builder.Services.AddScoped<AlocacaoUseCases>();
 builder.Services.AddScoped<DisciplinaUseCases>();
 builder.Services.AddScoped<LaboratorioUseCases>();
 builder.Services.AddScoped<AplicativoUseCases>();
 builder.Services.AddScoped<UsuarioUseCases>();
+builder.Services.Configure<SecuritySettings>(options =>
+    {
+        options.passwordSalt = Environment.GetEnvironmentVariable("PASSWORD_SALT");
+        options.jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+    }
+); 
 
 
 // Add services to the container.

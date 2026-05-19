@@ -7,29 +7,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gerenciamento_Escolar.Services;
 
-public class UsuarioUseCases(Context context, TokenService tokenService)
+public class UsuarioUseCases(Context context,HashServices hashServices)
 {
     
 
-    public Usuario criar(UsuarioDTO usuarioDto)
+    public Result<Usuario> criar(UsuarioDTO usuarioDto)
     {
         if (!Enum.TryParse<CargosDeUsuario>(usuarioDto.tipoUsuario, true, out CargosDeUsuario resultado))
         {
-            throw new Exception("Cargo de usuario invalido");
+            return Result<Usuario>.Failure("Cargo de usuario invalido");
         } 
         
-        //if (nameof(resultado).Equals(nameof(CargosDeUsuario.Diretor)) )
-        //{
-        //    throw new Exception(message: "Não é permitido criar um usuario com este cargo");}
+        if (resultado.ToString().Equals(nameof(CargosDeUsuario.Diretor)) )
+        {
+            return Result<Usuario>.Failure("Não é permitido criar um usuario com este cargo");}
 
         if (context.Usuarios.Any(u => u.nome == usuarioDto.nome))
         {
-            throw new Exception($"O nome {usuarioDto.nome} já está em uso");
+            return Result<Usuario>.Failure($"O nome {usuarioDto.nome} já está em uso");
         };
-        var key = Configuration.encodingKey;
         
-
-        var senhaEncoded = tokenService.hasherDeSenha(usuarioDto.senha, Encoding.ASCII.GetBytes(key));
+        var senhaEncoded = hashServices.toHashPassword(usuarioDto.senha);
         
         var usuario = new Usuario(usuarioDto.nome,
             usuarioDto.email,
@@ -37,40 +35,42 @@ public class UsuarioUseCases(Context context, TokenService tokenService)
         context.Usuarios.Add(usuario);
         context.SaveChanges();
         
-        return usuario;
+        return Result<Usuario>.Success(usuario);
     }
-    public Usuario procurarUm(int id)
+    public Result<Usuario> procurarUm(int id)
     {
         var usuario = context.Usuarios.Find(id);
         if (usuario == null)
         {
-            throw new Exception("Usuario não encontrado");}
-        return usuario;
+            return Result<Usuario>.Failure("Usuario não encontrado");
+        }
+        return Result<Usuario>.Success(usuario);
     }
-    public ListaDeUsuarioDTO listar(int pagina, int quantidade)
+    public Result<ListaDeUsuarioDTO>listar(int pagina, int quantidade)
     {
         var usuarios = context.Usuarios.Skip((pagina - 1) * quantidade).Take(quantidade)
             .Select(u => new RespostaUsuarioDTO(u.id, u.nome, u.email, u.tipoUsuario)).ToList();
-        return new ListaDeUsuarioDTO(pagina,quantidade,usuarios);
+        return Result<ListaDeUsuarioDTO>.Success(new ListaDeUsuarioDTO(pagina, quantidade, usuarios));
     }
+    
     public void remover(int id)
     {
         
         context.Usuarios.Where(u => u.id == id).ExecuteDelete();
     }
     
-    public Usuario atualizar(int id, UsuarioDTO usuarioAtualizadoDto)
+    public Result<Usuario> atualizar(int id, UsuarioDTO usuarioAtualizadoDto)
     {   
         
         var key = Configuration.encodingKey;
-        
 
-        var senhaEncoded = tokenService.hasherDeSenha(usuarioAtualizadoDto.senha, Encoding.ASCII.GetBytes(key));
 
-        var usuarioAtualizado = new Usuario(id,usuarioAtualizadoDto.nome, usuarioAtualizadoDto.email, senhaEncoded, usuarioAtualizadoDto.tipoUsuario);
+        var senhaHashed = hashServices.toHashPassword(usuarioAtualizadoDto.senha);
+
+        var usuarioAtualizado = new Usuario(id,usuarioAtualizadoDto.nome, usuarioAtualizadoDto.email, senhaHashed, usuarioAtualizadoDto.tipoUsuario);
         context.Usuarios.Update(usuarioAtualizado);
         context.SaveChanges();
-        return usuarioAtualizado;
+        return Result<Usuario>.Success(usuarioAtualizado);
     }
 
 

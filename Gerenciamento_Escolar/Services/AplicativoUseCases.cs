@@ -9,7 +9,7 @@ public class AplicativoUseCases(Context context)
 {
     
 
-    public Aplicativo criar(AplicativoDTO aplicativoDto)
+    public Result<Aplicativo> criar(AplicativoDTO aplicativoDto)
     {   
         var aplicativo = new Aplicativo(aplicativoDto.nome,
             aplicativoDto.versao,
@@ -17,34 +17,36 @@ public class AplicativoUseCases(Context context)
         context.Aplicativos.Add(aplicativo);
         context.SaveChanges();
         
-        return aplicativo;
+        return Result<Aplicativo>.Success(aplicativo);
     }
-    public Aplicativo procurarUm(int id)
+    
+    public Result<Aplicativo> procurarUm(int id)
     {
         var aplicativo = context.Aplicativos.Find(id);
         if (aplicativo == null)
         {
-            throw new Exception("Aplicativo não encontrado");}
-        return aplicativo;
+            return Result<Aplicativo>.Failure("Aplicativo não encontrado");}
+        return Result<Aplicativo>.Success(aplicativo);
     }
-    public ListaDeAplicativosDTO listar(int pagina, int quantidade)
+    public Result<ListaDeAplicativosDTO> listar(int pagina, int quantidade)
     {
         var aplicativos = context.Aplicativos.Skip((pagina - 1) * quantidade).Take(quantidade).ToList();
-        return new ListaDeAplicativosDTO(pagina,quantidade,aplicativos);
+        
+        return Result<ListaDeAplicativosDTO>.Success(new ListaDeAplicativosDTO(pagina, quantidade, aplicativos));
     }
     public void remover(int id)
     {
         context.Aplicativos.Where(a => a.id == id).ExecuteDelete();
     }
     
-    public Aplicativo atualizar(int id, AplicativoDTO aplicativoAtualizadoDto)
+    public Result<Aplicativo> atualizar(int id, AplicativoDTO aplicativoAtualizadoDto)
     {
         var aplicativoAtualizado = new Aplicativo(id, aplicativoAtualizadoDto.nome, aplicativoAtualizadoDto.versao,
             aplicativoAtualizadoDto.descricao);
         context.Aplicativos.Update(aplicativoAtualizado);
         context.SaveChanges();
         
-        return aplicativoAtualizado;
+        return Result<Aplicativo>.Success(aplicativoAtualizado);
     }
 
 }

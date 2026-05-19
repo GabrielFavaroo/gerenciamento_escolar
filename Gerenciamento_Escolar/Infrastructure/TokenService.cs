@@ -5,34 +5,32 @@ using System.Text;
 using Gerenciamento_Escolar.Dtos;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Persistence;
+using Gerenciamento_Escolar.Services;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Gerenciamento_Escolar.Infrastructure;
 
-public class TokenService(JwtSecurityTokenHandler handler,Context context)
+public class TokenService(JwtSecurityTokenHandler handler,Context context, HashServices hashServices, SecuritySettings securitySettings)
 
 
 {
-    public string receberToken(Usuario user)
+    public string createToken(Usuario user)
     {
 
-        var key = Encoding.ASCII.GetBytes(Configuration.encodingKey);
+        
+        var senhaInformada = hashServices.toHashPassword(user.senha);
 
-        var senhaInformada = hasherDeSenha(user.senha, key);
-
-        if (!context.Usuarios.Any(u => u.nome == user.nome && u.senha == senhaInformada))
-        {
-            throw new Exception(message: "Usuario ou senha incorretos");
-        }
-
+        
         user = context.Usuarios.FirstOrDefault(u => u.nome == user.nome && u.senha == senhaInformada);
 
         if (user == null)
         {
             throw new Exception("Usuario não encontrado");}
-     
 
-     var credentials = new SigningCredentials(new SymmetricSecurityKey(key),
+        var keyBytes = Encoding.ASCII.GetBytes(securitySettings.jwtKey);
+
+     var credentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes),
         SecurityAlgorithms.HmacSha256Signature);
 
      
@@ -54,20 +52,7 @@ public class TokenService(JwtSecurityTokenHandler handler,Context context)
     
 
 
-    public string hasherDeSenha(string senha, byte[] key)
-    {
-        
-        
-        
-        var senhaEncoded = Encoding.ASCII.GetBytes(senha);
-
-        var hmac = new HMACSHA256(key);
-            
-           var senhaHashed = hmac.ComputeHash(senhaEncoded);
-
-        return BitConverter.ToString(senhaHashed);
-
-    }
+    
 
     public static ClaimsIdentity GenerateClaims(Usuario user)
     {

@@ -11,6 +11,9 @@
         condition: "service_healthy"
     networks:
       - escola-rede
+    environment:
+      -JWT_SECRET_KEY: "chaveultrasecretaquenemeunemninguemsabe"
+      -PASSWORD_SALT: "saldosalpessuicosproduzidoporelfosecolhidoporumiete"
         
   db:
     image: postgres:18-alpine

@@ -1,26 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "/home/gabriel/RiderProjects/Gerenciamento_Escolar/Gerenciamento_Escolar/Gerenciamento_Escolar.csproj": {}
+    "C:\\Users\\Orcadius\\RiderProjects\\gerenciamento_escolar\\Gerenciamento_Escolar\\Gerenciamento_Escolar.csproj": {}
   },
   "projects": {
-    "/home/gabriel/RiderProjects/Gerenciamento_Escolar/Gerenciamento_Escolar/Gerenciamento_Escolar.csproj": {
+    "C:\\Users\\Orcadius\\RiderProjects\\gerenciamento_escolar\\Gerenciamento_Escolar\\Gerenciamento_Escolar.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/gabriel/RiderProjects/Gerenciamento_Escolar/Gerenciamento_Escolar/Gerenciamento_Escolar.csproj",
+        "projectUniqueName": "C:\\Users\\Orcadius\\RiderProjects\\gerenciamento_escolar\\Gerenciamento_Escolar\\Gerenciamento_Escolar.csproj",
         "projectName": "Gerenciamento_Escolar",
-        "projectPath": "/home/gabriel/RiderProjects/Gerenciamento_Escolar/Gerenciamento_Escolar/Gerenciamento_Escolar.csproj",
-        "packagesPath": "/home/gabriel/.nuget/packages/",
-        "outputPath": "/home/gabriel/RiderProjects/Gerenciamento_Escolar/Gerenciamento_Escolar/obj/",
+        "projectPath": "C:\\Users\\Orcadius\\RiderProjects\\gerenciamento_escolar\\Gerenciamento_Escolar\\Gerenciamento_Escolar.csproj",
+        "packagesPath": "C:\\Users\\Orcadius\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Orcadius\\RiderProjects\\gerenciamento_escolar\\Gerenciamento_Escolar\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/gabriel/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Orcadius\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -39,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
@@ -79,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.107/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Users\\Orcadius\\.dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

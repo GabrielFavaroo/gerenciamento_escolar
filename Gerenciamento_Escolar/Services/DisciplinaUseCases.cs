@@ -9,7 +9,7 @@ public class DisciplinaUseCases(Context context)
 {
     
 
-    public Disciplina criar(DisciplinaDTO disciplinaDto)
+    public Result<Disciplina> criar(DisciplinaDTO disciplinaDto)
     {
         var disciplina = new Disciplina(disciplinaDto.nome,
             disciplinaDto.alunos_matriculados,
@@ -18,23 +18,23 @@ public class DisciplinaUseCases(Context context)
         context.Disciplinas.Add(disciplina);
         context.SaveChanges();
         
-        return disciplina;
+        return Result<Disciplina>.Success(disciplina);
     }
-    public Disciplina procurarUm(int id)
+    public Result<Disciplina> procurarUm(int id)
     {
         var disciplina = context.Disciplinas.Find(id);
         if (disciplina == null)
         {
-            throw new Exception("Disciplina não encontrada");
+            Result<Disciplina>.Failure("Disciplina não encontrada");
         }
-        return disciplina;
+        return Result<Disciplina>.Success(disciplina);
     }
-    public ListaDeDisciplinaDTO listar(int pagina, int quantidade)
+    public Result<ListaDeDisciplinaDTO> listar(int pagina, int quantidade)
     {
         
           var disciplinas =  context.Disciplinas.Skip((pagina - 1) * quantidade).Take(quantidade).ToList();
 
-          return new ListaDeDisciplinaDTO(pagina, quantidade, disciplinas);
+          return Result<ListaDeDisciplinaDTO>.Success(new ListaDeDisciplinaDTO(pagina, quantidade, disciplinas));
     }
     public void remover(int id)
     {
@@ -43,14 +43,14 @@ public class DisciplinaUseCases(Context context)
         
     }
     
-    public Disciplina atualizar(int id, DisciplinaDTO disciplinaAtualizadaDto)
+    public Result<Disciplina> atualizar(int id, DisciplinaDTO disciplinaAtualizadaDto)
     {
         var disciplinaAtualizada = new Disciplina(id, disciplinaAtualizadaDto.nome,
             disciplinaAtualizadaDto.alunos_matriculados, disciplinaAtualizadaDto.descricao,
             disciplinaAtualizadaDto.coordenador_id);
         context.Disciplinas.Update(disciplinaAtualizada);
         context.SaveChanges();
-        return disciplinaAtualizada;
+        return Result<Disciplina>.Success(disciplinaAtualizada);
         
     }
 
