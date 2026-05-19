@@ -24,6 +24,10 @@ public class Disciplina
         this.coordenador_id = coordenador_id;
     }
 
+    protected Disciplina()
+    {
+    }
+
     [Key]
     [Column(name:"id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

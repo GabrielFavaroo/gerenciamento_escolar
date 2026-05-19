@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gerenciamento_Escolar.Controllers;
 
-[Route("usuario")]
 [ApiController]
-public class UsuarioController(UsuarioUseCases usuarioUseCases) : Controller
+[Route("user")]
+
+public class UsuarioController(UsuarioUseCases usuarioUseCases) : ControllerBase
 {
     
     [HttpGet("{id:int}")]
@@ -26,16 +27,18 @@ public class UsuarioController(UsuarioUseCases usuarioUseCases) : Controller
         return Ok(usuarioUseCases.listar(pagina, quantidade));
         
     }
-
-    [HttpPost]
-    [Authorize(Roles = "diretor")]
+    
+    [HttpPost(template:"signin")]
+    
+    //[Authorize(Roles = "Diretor")]
+    [AllowAnonymous]
     public IActionResult criarUsuario(UsuarioDTO usuarioDto)
     {
         return Created("usuario",usuarioUseCases.criar(usuarioDto));
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "diretor")]
+    [Authorize(Roles = "Diretor")]
     public IActionResult deletarUsuario([Range(1,int.MaxValue)]int id)
     {
         usuarioUseCases.remover(id);
@@ -43,12 +46,11 @@ public class UsuarioController(UsuarioUseCases usuarioUseCases) : Controller
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "diretor")]
+    [Authorize(Roles = "Diretor")]
     public IActionResult atualizarUsuario([Range(1,int.MaxValue)]int id,UsuarioDTO usuarioDto)
     {
         return Ok(usuarioUseCases.atualizar(id, usuarioDto));
     }
     
     
-}
 }

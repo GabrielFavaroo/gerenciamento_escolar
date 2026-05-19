@@ -10,9 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gerenciamento_Escolar.Controllers;
 
-[Route("alocacao")]
 [ApiController]
-public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : Controller
+[Route("alocacao")]
+
+public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerBase
 {
     
 

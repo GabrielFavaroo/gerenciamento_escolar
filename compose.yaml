@@ -1,16 +1,35 @@
 ﻿services:
   gerenciamento_escolar:
-    image: gerenciamento_escolar
+    image: gabrielfavar0/escola:v1
     build:
       context: .
-      dockerfile: Gerenciamento_Escolar/Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "9000:8080"
+    depends_on:
+      db:
+        condition: "service_healthy"
+    networks:
+      - escola-rede
+        
   db:
-    image: postgres-18-alpine3.23
+    image: postgres:18-alpine
     environment:
       POSTGRES_USER: usuario
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: escolaDb
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - persist_data:/var/lib/postgresql
+      - ~/.postgres_data:/var/lib/postgresql
+    networks:
+      - escola-rede
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U usuario -d escolaDb" ]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+      
+networks:
+  escola-rede:
+    driver: bridge

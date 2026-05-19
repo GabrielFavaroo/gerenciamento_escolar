@@ -20,6 +20,10 @@ public class Laboratorio
         this.qnt_computadores = qnt_computadores;
     }
 
+    protected Laboratorio()
+    {
+    }
+
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column(name:"id")]

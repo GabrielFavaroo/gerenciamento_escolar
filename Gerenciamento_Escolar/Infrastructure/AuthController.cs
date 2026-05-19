@@ -6,7 +6,7 @@ namespace Gerenciamento_Escolar.Infrastructure;
 
 [ApiController]
 [Route("auth")]
-public class AuthController(TokenService tokenService) : Controller
+public class AuthController(TokenService tokenService) : ControllerBase
 {
     [HttpPost("login")]
     public IActionResult login(CredenciaisDeUsuarioDTO usuarioDto)
@@ -15,10 +15,6 @@ public class AuthController(TokenService tokenService) : Controller
         return Ok(tokenService.receberToken(new Usuario(usuarioDto.nome, usuarioDto.senha)));
     }
 
-    public IActionResult signin(CredenciaisDeUsuarioDTO credenciaisDeUsuarioDto,UsuarioDTO usuarioDto)
-    {
-        return Ok();
-
-    }
+    
     
 }

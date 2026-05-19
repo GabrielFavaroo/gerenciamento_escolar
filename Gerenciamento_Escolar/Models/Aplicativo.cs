@@ -22,6 +22,10 @@ public class Aplicativo
         this.descricao = descricao;
     }
 
+    protected Aplicativo()
+    {
+    }
+
     [Key]
     [Column(name:"id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

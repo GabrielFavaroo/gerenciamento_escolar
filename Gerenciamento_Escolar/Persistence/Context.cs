@@ -5,22 +5,18 @@ namespace Gerenciamento_Escolar.Persistence;
 
 public class Context : DbContext
 {
-    private DbContextOptions<Context> dbop;
+    
+    public Context(DbContextOptions<Context> options) : base(options){}
 
-    public Context(DbContextOptions<Context> dbop)
-    {
-        this.dbop = dbop;
-    }
 
-    public DbSet<Alocacao> Alocacoes;
-    public DbSet<Laboratorio> Laboratorios;
-    public DbSet<Aplicativo> Aplicativos;
-    public DbSet<Disciplina> Disciplinas;
-    public DbSet<Usuario> Usuarios;
-    public DbSet<Disciplina_Aplicativo> DisciplinaAplicativos;
-    public DbSet<Laboratorio_Aplicativo> LaboratorioAplicativos;
+    public DbSet<Alocacao> Alocacoes { get; set; }
+    public DbSet<Laboratorio> Laboratorios{ get; set; }
+    public DbSet<Aplicativo> Aplicativos{ get; set; }
+    public DbSet<Disciplina> Disciplinas{ get; set; }
+    public DbSet<Usuario> Usuarios{ get; set; }
+    public DbSet<Disciplina_Aplicativo> DisciplinaAplicativos{ get; set; }
+    public DbSet<Laboratorio_Aplicativo> LaboratorioAplicativos{ get; set; }
  
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseNpgsql("Data Source=escola.db");
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -6,32 +6,38 @@ namespace Gerenciamento_Escolar.Models;
 [Table(name:"alocacao")]
 public class Alocacao
 {
-    public Alocacao( int disciplinaId, int laboratorioId, string diaDaSemana, TimeSpan horarioInicio, TimeSpan horarioFim, string status, int aprovadoPorId, DateTime dataAprovacao, int coordenadorId)
+    public Alocacao( int disciplina_id, int laboratorio_id, string dia_da_semana,DateTime data_agendamento, TimeSpan horario_inicio, TimeSpan horario_fim, string status, int? aprovado_por_id, DateTime? data_aprovacao, int? coordenador_id)
     {
         
-        disciplina_id = disciplinaId;
-        laboratorio_id = laboratorioId;
-        dia_da_semana = diaDaSemana;
-        horario_inicio = horarioInicio;
-        horario_fim = horarioFim;
+        this.disciplina_id = disciplina_id;
+        this.laboratorio_id = laboratorio_id;
+        this.dia_da_semana = dia_da_semana;
+        this.data_agendamento = data_agendamento;
+        this.horario_inicio = horario_inicio;
+        this.horario_fim = horario_fim;
         this.status = status;
-        aprovado_por_id = aprovadoPorId;
-        data_aprovacao = dataAprovacao;
-        coordenador_id = coordenadorId;
+        this.aprovado_por_id = aprovado_por_id; 
+        this.data_aprovacao = data_aprovacao;
+        this.coordenador_id = coordenador_id;
     }
 
-    public Alocacao(int id, int disciplinaId, int laboratorioId, string diaDaSemana, TimeSpan horarioInicio, TimeSpan horarioFim, string status, int aprovadoPorId, DateTime dataAprovacao, int coordenadorId)
+    public Alocacao(int id, int disciplina_id, int laboratorio_id, string dia_da_semana,DateTime data_agendamento, TimeSpan horario_inicio, TimeSpan horario_fim, string status, int? aprovado_por_id, DateTime? data_aprovacao, int? coordenador_id)
     {
         this.id = id;
-        disciplina_id = disciplinaId;
-        laboratorio_id = laboratorioId;
-        dia_da_semana = diaDaSemana;
-        horario_inicio = horarioInicio;
-        horario_fim = horarioFim;
+        this.disciplina_id = disciplina_id;
+        this.laboratorio_id = laboratorio_id;
+        this.dia_da_semana = dia_da_semana;
+        this.data_agendamento = data_agendamento;
+        this.horario_inicio = horario_inicio;
+        this.horario_fim = horario_fim;
         this.status = status;
-        aprovado_por_id = aprovadoPorId;
-        data_aprovacao = dataAprovacao;
-        coordenador_id = coordenadorId;
+        this.aprovado_por_id = aprovado_por_id; 
+        this.data_aprovacao = data_aprovacao;
+        this.coordenador_id = coordenador_id;
+    }
+
+    protected Alocacao()
+    {
     }
 
     [Key]
@@ -41,31 +47,35 @@ public class Alocacao
     
     [Column(name:"disciplina_id")]
     [ForeignKey(name:"disciplina.id")]
-    int disciplina_id { get; set; }
+    public int disciplina_id { get; set; }
     
     [Column(name:"laboratorio_id")]
     [ForeignKey(name:"laboratorio.id")]
-    int laboratorio_id { get; set; }
+    public int laboratorio_id { get; set; }
     
     
     [Column(name:"dia_da_semana")]
-    string dia_da_semana { get; set; }
+    public string dia_da_semana { get; set; }
+    
+    [Column(name: "data_agendamento")]
+    public DateTime data_agendamento { get; set; }
     
     [Column(name: "horario_inicio")]
-    TimeSpan horario_inicio { get; set; }
+    public TimeSpan horario_inicio { get; set; }
     
     [Column(name: "horario_fim")]
-    TimeSpan horario_fim { get; set; }
+    public TimeSpan horario_fim { get; set; }
     
     [Column(name: "status")]
     public string status { get; set; }
     
     [Column(name: "aprovado_por_id")]
-    int aprovado_por_id { get; set; }
+    public int? aprovado_por_id { get; set; }
+    
     
     [Column(name: "data_aprovacao")]
-    public DateTime data_aprovacao { get; set; }
+    public DateTime? data_aprovacao { get; set; }
     
-    [Column(name: "data_aprovacao")]
-    int coordenador_id { get; set; }
+    [Column(name: "coordenador_id")]
+    public int? coordenador_id { get; set; }
 }

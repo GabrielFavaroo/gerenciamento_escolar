@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gerenciamento_Escolar.Controllers;
 
-[Route("laboratorio")]
 [ApiController]
-public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Controller
+[Route("laboratorio")]
+
+public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : ControllerBase
 {
     
     [HttpGet("{id:int}")]
@@ -29,14 +30,14 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     }
 
     [HttpPost]
-    [Authorize(Roles = "diretor")]
+    [Authorize(Roles = "Diretor")]
     public IActionResult criarLaboratorio(LaboratorioDTO laboratorioDto)
     {
         return Created("laboratorio", laboratorioUseCases.criar(laboratorioDto));
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "diretor")]
+    [Authorize(Roles = "Diretor")]
     public IActionResult deletarLaboratorio([Range(1,int.MaxValue)]int id)
     {
         laboratorioUseCases.remover(id);
@@ -44,7 +45,7 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "tecnico,diretor")]
+    [Authorize(Roles = "Tecnico,Diretor")]
     public IActionResult atualizarLaboratorio([Range(1,int.MaxValue)]int id,LaboratorioDTO laboratorioDto)
     {
         return Ok(laboratorioUseCases.atualizar(id, laboratorioDto));

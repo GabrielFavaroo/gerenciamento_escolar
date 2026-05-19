@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gerenciamento_Escolar.Controllers;
 
-[Route("aplicativo")]
 [ApiController]
-public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Controller
+[Route("aplicativo")]
+
+public class AplicativoController(AplicativoUseCases aplicativoUseCases) : ControllerBase
 {
     [HttpGet("{id:int}")]
     public IActionResult encontrarAplicativoPorId([Range(1,int.MaxValue)]int id)
@@ -20,7 +21,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     }
 
     [HttpGet]
-    [Authorize(Roles = "tecnico")]
+    [Authorize(Roles = "Tecnico")]
     public IActionResult listarAplicativos([FromQuery(Name = "p")][DefaultValue(1)][Range(1,int.MaxValue)]int pagina,
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)
     {
@@ -29,14 +30,14 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     }
 
     [HttpPost]
-    [Authorize(Roles = "tecnico")]
+    [Authorize(Roles = "Tecnico")]
     public IActionResult criarAplicativo(AplicativoDTO aplicativoDto)
     {
         return Created("aplicativo",aplicativoUseCases.criar(aplicativoDto));
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "tecnico")]
+    [Authorize(Roles = "Tecnico")]
     public IActionResult deletarAplicativo([Range(1,int.MaxValue)]int id)
     {
         aplicativoUseCases.remover(id);
@@ -44,7 +45,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "tecnico")]
+    [Authorize(Roles = "Tecnico")]
     public IActionResult atualizarAplicativo([Range(1,int.MaxValue)]int id,AplicativoDTO aplicativoDto)
     {
         return Ok(aplicativoUseCases.atualizar(id, aplicativoDto));

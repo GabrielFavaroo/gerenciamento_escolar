@@ -1,6 +1,7 @@
 using Gerenciamento_Escolar.Dtos;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gerenciamento_Escolar.Services;
 
@@ -15,7 +16,8 @@ public class DisciplinaUseCases(Context context)
             disciplinaDto.descricao,
             disciplinaDto.coordenador_id);
         context.Disciplinas.Add(disciplina);
-        disciplina = context.Disciplinas.Find(disciplina);
+        context.SaveChanges();
+        
         return disciplina;
     }
     public Disciplina procurarUm(int id)
@@ -37,7 +39,7 @@ public class DisciplinaUseCases(Context context)
     public void remover(int id)
     {
         
-        context.Disciplinas.Remove(procurarUm(id));
+        context.Disciplinas.Where(d => d.id == id).ExecuteDelete();
         
     }
     
@@ -47,8 +49,9 @@ public class DisciplinaUseCases(Context context)
             disciplinaAtualizadaDto.alunos_matriculados, disciplinaAtualizadaDto.descricao,
             disciplinaAtualizadaDto.coordenador_id);
         context.Disciplinas.Update(disciplinaAtualizada);
-        var disciplina = context.Disciplinas.Find(id);
-        return disciplina;
+        context.SaveChanges();
+        return disciplinaAtualizada;
+        
     }
 
 }

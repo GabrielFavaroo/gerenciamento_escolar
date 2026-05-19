@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace Gerenciamento_Escolar.Infrastructure;
 
 public class TokenService(JwtSecurityTokenHandler handler,Context context)
+
+
 {
     public string receberToken(Usuario user)
     {
@@ -46,10 +48,13 @@ public class TokenService(JwtSecurityTokenHandler handler,Context context)
 
         return handler.WriteToken(token);
     }
+    
+    
 
 
     public string hasherDeSenha(string senha, byte[] key)
     {
+        
         
         
         var senhaEncoded = Encoding.ASCII.GetBytes(senha);

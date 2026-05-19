@@ -1,6 +1,7 @@
 using Gerenciamento_Escolar.Dtos;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gerenciamento_Escolar.Services;
 
@@ -14,7 +15,8 @@ public class AplicativoUseCases(Context context)
             aplicativoDto.versao,
             aplicativoDto.descricao);
         context.Aplicativos.Add(aplicativo);
-        aplicativo = context.Aplicativos.Find(aplicativo);
+        context.SaveChanges();
+        
         return aplicativo;
     }
     public Aplicativo procurarUm(int id)
@@ -32,8 +34,7 @@ public class AplicativoUseCases(Context context)
     }
     public void remover(int id)
     {
-        
-        context.Aplicativos.Remove(this.procurarUm(id));
+        context.Aplicativos.Where(a => a.id == id).ExecuteDelete();
     }
     
     public Aplicativo atualizar(int id, AplicativoDTO aplicativoAtualizadoDto)
@@ -41,8 +42,9 @@ public class AplicativoUseCases(Context context)
         var aplicativoAtualizado = new Aplicativo(id, aplicativoAtualizadoDto.nome, aplicativoAtualizadoDto.versao,
             aplicativoAtualizadoDto.descricao);
         context.Aplicativos.Update(aplicativoAtualizado);
-        var aplicativo = context.Aplicativos.Find(id);
-        return aplicativo;
+        context.SaveChanges();
+        
+        return aplicativoAtualizado;
     }
 
 }

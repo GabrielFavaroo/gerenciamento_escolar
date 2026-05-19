@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gerenciamento_Escolar.Controllers;
 
-[Route("disciplina")]
 [ApiController]
-public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Controller
+[Route("disciplina")]
+
+public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : ControllerBase
 {
     [HttpGet("{id:int}")]
     public IActionResult encontrarDisciplinaPorId([Range(1,int.MaxValue)]int id)
@@ -28,14 +29,14 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     }
 
     [HttpPost]
-    [Authorize(Roles = "coordenador")]
+    [Authorize(Roles = "Coordenador")]
     public IActionResult criarDisciplina(DisciplinaDTO disciplinaDto)
     {
         return Created("disciplina",disciplinaUseCases.criar(disciplinaDto));
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "coordenador")]
+    [Authorize(Roles = "Coordenador")]
     public IActionResult deletarDisciplina([Range(1,int.MaxValue)]int id)
     {
         disciplinaUseCases.remover(id);
@@ -43,7 +44,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "coordenador")]
+    [Authorize(Roles = "Coordenador")]
     public IActionResult atualizarDisciplina([Range(1,int.MaxValue)]int id,DisciplinaDTO disciplinaDto)
     {
         return Ok(disciplinaUseCases.atualizar(id, disciplinaDto));

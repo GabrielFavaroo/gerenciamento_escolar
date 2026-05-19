@@ -1,6 +1,7 @@
 using Gerenciamento_Escolar.Dtos;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gerenciamento_Escolar.Services;
 
@@ -12,6 +13,7 @@ public class LaboratorioUseCases(Context context)
     {
         var laboratorio = new Laboratorio(laboratorioDto.nome, laboratorioDto.qnt_computadores);
         context.Laboratorios.Add(laboratorio);
+        context.SaveChanges();
         return laboratorio;
     }
     public Laboratorio procurarUm(int id)
@@ -31,15 +33,15 @@ public class LaboratorioUseCases(Context context)
     }
     public void remover(int id)
     {
-        
-        context.Laboratorios.Remove(this.procurarUm(id));
+        context.Laboratorios.Where(l => l.id == id).ExecuteDelete();
     }
     
     public Laboratorio atualizar(int id,LaboratorioDTO laboratorioDto)
     {
         var laboratorio = new Laboratorio(id, laboratorioDto.nome, laboratorioDto.qnt_computadores);
         context.Laboratorios.Update(laboratorio);
-        return context.Laboratorios.Find(id);
+        context.SaveChanges();
+        return laboratorio;
     }
 
 }
