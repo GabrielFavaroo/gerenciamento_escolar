@@ -18,20 +18,20 @@ public class AlocacaoUseCases(Context context)
     private static string pattern = @"[ -_][Ff]eira|\s|\d|ç|Ç";
     
 
-    public Result<Alocacao> criar(AlocacaoDTO alocacaoDto)
+    public Result<Alocacao> Criar(AlocacaoDTO alocacaoDto)
     {
         
         
-        if(!dateIsFree(alocacaoDto.dataAgendamento,alocacaoDto.horario_inicio,alocacaoDto.horario_fim))
-            return Result<Alocacao>.Failure("O horario da alocação já esta reservado");
+        if(!DateIsFree(alocacaoDto.dataAgendamento,alocacaoDto.horario_inicio,alocacaoDto.horario_fim))
+            return Result<Alocacao>.Failure("O horario da alocação já esta reservado",409);
 
 
         var diaFormatado = formatDateName(alocacaoDto.dia_da_semana);
 
 
-        if (!isTheDayValid(diaFormatado))
+        if (!IsTheDayValid(diaFormatado))
         {
-            return Result<Alocacao>.Failure("Dia da semana inválido");
+            return Result<Alocacao>.Failure("Dia da semana inválido",400);
         };
 
         var alocacao = new Alocacao(alocacaoDto.disciplina_id,
@@ -48,47 +48,47 @@ public class AlocacaoUseCases(Context context)
         
         context.Alocacoes.Add(alocacao);
         context.SaveChanges();
-        return Result<Alocacao>.Success(alocacao);
+        return Result<Alocacao>.Success(alocacao,200);
     }
 
-    public Result<Alocacao> procurarUm(int id)
+    public Result<Alocacao> ProcurarUm(int id)
     {
         
         var alocacao = context.Alocacoes.Find(id);
         if (alocacao == null)
         {
-            return Result<Alocacao>.Failure("Alocação não encontrada");
+            return Result<Alocacao>.Failure("Alocação não encontrada",404);
         }
-        return Result<Alocacao>.Success(alocacao);
+        return Result<Alocacao>.Success(alocacao,200);
     }
     
-    public Result<ListaDeAlocacoesDTO> listar(int pagina, int quantidade)
+    public Result<ListaDeAlocacoesDTO> Listar(int pagina, int quantidade)
     {
         var alocacoes = context.Alocacoes.Skip((pagina - 1) * quantidade).Take(quantidade).ToList();
         
         
-        return Result<ListaDeAlocacoesDTO>.Success(new ListaDeAlocacoesDTO(pagina, quantidade, alocacoes));
+        return Result<ListaDeAlocacoesDTO>.Success(new ListaDeAlocacoesDTO(pagina, quantidade, alocacoes),200);
     }
-    public void remover(int id)
+    public Result<Alocacao> remover(int id)
     {
 
         context.Alocacoes.Where(a => a.id == id).ExecuteDelete();
-
+        return Result<Alocacao>.NoContent(204);
     }
     
-    public Result<Alocacao> atualizar(int id,AlocacaoAtualizadaDTO alocacaoAtualizadaDto)
+    public Result<Alocacao> Atualizar(int id,AlocacaoAtualizadaDTO alocacaoAtualizadaDto)
     {   
         
-        if(!dateIsFree(alocacaoAtualizadaDto.dataAgendamento,alocacaoAtualizadaDto.horario_fim,alocacaoAtualizadaDto.horario_fim))
-            return Result<Alocacao>.Failure("O horario da alocação já estava reservado");
+        if(!DateIsFree(alocacaoAtualizadaDto.dataAgendamento,alocacaoAtualizadaDto.horario_fim,alocacaoAtualizadaDto.horario_fim))
+            return Result<Alocacao>.Failure("O horario da alocação já estava reservado",409);
 
         
         var diaFormatado = Regex.Replace(input: alocacaoAtualizadaDto.dia_da_semana,pattern, replacement: "").ToLower();
 
 
-        if (!isTheDayValid(diaFormatado))
+        if (!IsTheDayValid(diaFormatado))
         {
-            return Result<Alocacao>.Failure("Dia da semana inválido");
+            return Result<Alocacao>.Failure("Dia da semana inválido",400);
         };
         
         var alocacaoAtualizada = new Alocacao(id, alocacaoAtualizadaDto.disciplina_id,
@@ -118,19 +118,19 @@ public class AlocacaoUseCases(Context context)
         context.SaveChanges();
         
         
-        return Result<Alocacao>.Success(alocacaoAtualizada);
+        return Result<Alocacao>.Success(alocacaoAtualizada,200);
     }
     
     
 
-    private bool isTheDayValid(string diaFormatado)
+    private bool IsTheDayValid(string diaFormatado)
     {
         return nomesDosDias.Contains(diaFormatado) ? true : false;
         
         
     }
 
-    private bool dateIsFree(DateTime date, TimeSpan startTime,TimeSpan endTime)
+    private bool DateIsFree(DateTime date, TimeSpan startTime,TimeSpan endTime)
     {
         if (context.Alocacoes.Any(al =>
                 al.data_agendamento == date

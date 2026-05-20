@@ -15,7 +15,7 @@ public class TokenService(JwtSecurityTokenHandler handler,Context context, HashS
 
 
 {
-    public string createToken(Usuario user)
+    public Result<string> createToken(Usuario user)
     {
 
         
@@ -26,7 +26,7 @@ public class TokenService(JwtSecurityTokenHandler handler,Context context, HashS
 
         if (user == null)
         {
-            throw new Exception("Usuario não encontrado");}
+            return Result<string>.Failure("Usuario não encontrado",404);}
 
         var keyBytes = Encoding.ASCII.GetBytes(securitySettings.jwtKey);
 
@@ -41,12 +41,14 @@ public class TokenService(JwtSecurityTokenHandler handler,Context context, HashS
         Subject = GenerateClaims(user),
         Expires = DateTime.UtcNow.AddHours(2),
         SigningCredentials = credentials,
+        Issuer = "escola",
+        Audience = "escola"
     };
 
 
     var token = handler.CreateToken(tokenDescriptor);
 
-        return handler.WriteToken(token);
+        return Result<string>.Success(handler.WriteToken(token),200);
     }
     
     

@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Gerenciamento_Escolar.Infrastructure;
+using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Persistence;
 using Gerenciamento_Escolar.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,8 +22,10 @@ builder.Services.AddAuthentication(auth =>{
     {
         IssuerSigningKey =
             new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.encodingKey)),
-        ValidateIssuer = false,
-        ValidateAudience = false
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidIssuer = "escola",
+        ValidAudience = "escola"
         
     };
 
@@ -38,6 +41,8 @@ builder.Services.AddScoped<DisciplinaUseCases>();
 builder.Services.AddScoped<LaboratorioUseCases>();
 builder.Services.AddScoped<AplicativoUseCases>();
 builder.Services.AddScoped<UsuarioUseCases>();
+builder.Services.AddScoped<ResponseMapper>();
+builder.Services.AddScoped<HashServices>();
 builder.Services.Configure<SecuritySettings>(options =>
     {
         options.passwordSalt = Environment.GetEnvironmentVariable("PASSWORD_SALT");
@@ -48,6 +53,13 @@ builder.Services.Configure<SecuritySettings>(options =>
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddCors(options=>
+options.AddPolicy("AllowRequests", policy=>
+{
+    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+})
+);
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
@@ -64,17 +76,19 @@ using (var scope = app.Services.CreateScope())
 }
     //app.UseHttpsRedirection();
 app.MapStaticAssets();
+app.UseCors("AllowRequests");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     //app.UseHsts();
+    app.MapOpenApi();
 }
 
 

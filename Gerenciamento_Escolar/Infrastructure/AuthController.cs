@@ -12,7 +12,7 @@ public class AuthController(TokenService tokenService) : ControllerBase
     public IActionResult login(CredenciaisDeUsuarioDTO usuarioDto)
     {
 
-        return Ok(tokenService.createToken(new Usuario(usuarioDto.nome, usuarioDto.senha)));
+        return ResponseMapper.createHttpResponse(tokenService.createToken(new Usuario(usuarioDto.nome, usuarioDto.senha)),this);
     }
 
     

@@ -18,29 +18,29 @@ public class DisciplinaUseCases(Context context)
         context.Disciplinas.Add(disciplina);
         context.SaveChanges();
         
-        return Result<Disciplina>.Success(disciplina);
+        return Result<Disciplina>.Success(disciplina,200);
     }
     public Result<Disciplina> procurarUm(int id)
     {
         var disciplina = context.Disciplinas.Find(id);
         if (disciplina == null)
         {
-            Result<Disciplina>.Failure("Disciplina não encontrada");
+            Result<Disciplina>.Failure("Disciplina não encontrada",404);
         }
-        return Result<Disciplina>.Success(disciplina);
+        return Result<Disciplina>.Success(disciplina,200);
     }
     public Result<ListaDeDisciplinaDTO> listar(int pagina, int quantidade)
     {
         
           var disciplinas =  context.Disciplinas.Skip((pagina - 1) * quantidade).Take(quantidade).ToList();
 
-          return Result<ListaDeDisciplinaDTO>.Success(new ListaDeDisciplinaDTO(pagina, quantidade, disciplinas));
+          return Result<ListaDeDisciplinaDTO>.Success(new ListaDeDisciplinaDTO(pagina, quantidade, disciplinas),200);
     }
-    public void remover(int id)
+    public Result<Disciplina> remover(int id)
     {
         
         context.Disciplinas.Where(d => d.id == id).ExecuteDelete();
-        
+        return Result<Disciplina>.NoContent(204);
     }
     
     public Result<Disciplina> atualizar(int id, DisciplinaDTO disciplinaAtualizadaDto)
@@ -50,7 +50,7 @@ public class DisciplinaUseCases(Context context)
             disciplinaAtualizadaDto.coordenador_id);
         context.Disciplinas.Update(disciplinaAtualizada);
         context.SaveChanges();
-        return Result<Disciplina>.Success(disciplinaAtualizada);
+        return Result<Disciplina>.Success(disciplinaAtualizada,200);
         
     }
 

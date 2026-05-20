@@ -22,7 +22,7 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
     public IActionResult encontrarAlocacaoPorId([Range(1,int.MaxValue)]int id)
     {
 
-        return Ok(alocacaoUseCases.procurarUm(id));
+        return ResponseMapper.createHttpResponse(alocacaoUseCases.ProcurarUm(id),this);
 
     }
 
@@ -31,7 +31,7 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)
     {
 
-        return Ok(alocacaoUseCases.listar(pagina, quantidade));
+        return ResponseMapper.createHttpResponse(alocacaoUseCases.Listar(pagina, quantidade),this);
         
     }
 
@@ -39,21 +39,21 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
     [Authorize(Roles = "coordenador")]
     public IActionResult criarAlocacao(AlocacaoDTO alocacaoDto)
     {
-        return Created("alocacao",alocacaoUseCases.criar(alocacaoDto));
+        return ResponseMapper.createHttpResponse(alocacaoUseCases.Criar(alocacaoDto),this);
     }
 
     [HttpDelete("{id:int}")]
     public IActionResult deletarAlocacao([Range(1,int.MaxValue)]int id)
     {
-        alocacaoUseCases.remover(id);
-        return NoContent();
+        
+        return ResponseMapper.createHttpResponse(alocacaoUseCases.remover(id),this);
     }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "diretor")]
     public IActionResult atualizarAlocacao([Range(1,int.MaxValue)]int id,AlocacaoAtualizadaDTO alocacaoDto)
     {
-        return Ok(alocacaoUseCases.atualizar(id, alocacaoDto));
+        return ResponseMapper.createHttpResponse(alocacaoUseCases.Atualizar(id, alocacaoDto),this);
     }
     
     
