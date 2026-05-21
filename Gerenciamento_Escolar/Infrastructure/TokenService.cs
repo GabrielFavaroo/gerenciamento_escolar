@@ -11,13 +11,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Gerenciamento_Escolar.Infrastructure;
 
-public class TokenService(JwtSecurityTokenHandler handler,Context context, HashServices hashServices, SecuritySettings securitySettings)
+public class TokenService(JwtSecurityTokenHandler handler,Context context, HashServices hashServices, IOptions<SecuritySettings> options)
 
 
 {
     public Result<string> createToken(Usuario user)
     {
-
+        var securitySettings = options.Value;
         
         var senhaInformada = hashServices.toHashPassword(user.senha);
 
@@ -42,7 +42,10 @@ public class TokenService(JwtSecurityTokenHandler handler,Context context, HashS
         Expires = DateTime.UtcNow.AddHours(2),
         SigningCredentials = credentials,
         Issuer = "escola",
-        Audience = "escola"
+        Audience = "escola",
+        
+        
+        
     };
 
 

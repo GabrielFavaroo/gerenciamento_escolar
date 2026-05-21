@@ -34,21 +34,28 @@ public class UsuarioController(UsuarioUseCases usuarioUseCases) : ControllerBase
     [HttpPost(template:"signin")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     
-    //[Authorize(Roles = "Diretor")]
-    [AllowAnonymous]
+    [Authorize(Roles = "Diretor")]
+    
     public IActionResult criarUsuario([FromBody]UsuarioDTO usuarioDto)
     {
+        
         return Created("usuario",usuarioUseCases.criar(usuarioDto));
     }
 
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Diretor")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult deletarUsuario([FromRoute][Range(1,int.MaxValue)]int id)
+    public IActionResult deletarUsuario([FromRoute] [Range(1, int.MaxValue)] int id)
     {
         usuarioUseCases.remover(id);
         return NoContent();
+
     }
+    
+    [HttpGet("test-claims")]
+    [AllowAnonymous]
+    
+    
 
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

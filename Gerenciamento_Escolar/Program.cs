@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Gerenciamento_Escolar.Infrastructure;
 using Gerenciamento_Escolar.Models;
@@ -10,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 builder.Services.AddAuthentication(auth =>{
     auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;}
@@ -22,12 +24,17 @@ builder.Services.AddAuthentication(auth =>{
     be.TokenValidationParameters = new TokenValidationParameters
     {
         IssuerSigningKey =
-            new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.encodingKey)),
+            new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET_KEY"))),
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidIssuer = "escola",
-        ValidAudience = "escola"
+        ValidAudience = "escola",
         
+        NameClaimType = System.Security.Claims.ClaimTypes.Name,
+        RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+        
+        
+        ClockSkew = TimeSpan.FromMinutes(2)
     };
 
     });

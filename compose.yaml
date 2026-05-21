@@ -1,6 +1,6 @@
 ﻿services:
   gerenciamento_escolar:
-    image: gabrielfavar0/escola:v1
+    image: gabrielfavar0/escola:v4
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,8 +12,8 @@
     networks:
       - escola-rede
     environment:
-      -JWT_SECRET_KEY: "chaveultrasecretaquenemeunemninguemsabe"
-      -PASSWORD_SALT: "saldosalpessuicosproduzidoporelfosecolhidoporumiete"
+      - JWT_SECRET_KEY=chaveultrasecretaquenemeunemninguemsabe
+      - PASSWORD_SALT=saldosalpessuicosproduzidoporelfosecolhidoporumiete
         
   db:
     image: postgres:18-alpine

@@ -18,9 +18,9 @@ public class UsuarioUseCases(Context context,HashServices hashServices)
             return Result<RespostaUsuarioDTO>.Failure("Cargo de usuario invalido",403);
         } 
         
-        if (resultado.ToString().Equals(nameof(CargosDeUsuario.Diretor)) )
+       if (resultado.ToString().Equals(nameof(CargosDeUsuario.Diretor)) )
         {
-            return Result<RespostaUsuarioDTO>.Failure("Não é permitido Criar um usuario com este cargo",403);}
+          return Result<RespostaUsuarioDTO>.Failure("Não é permitido criar um usuario com este cargo",403);}
 
         if (context.Usuarios.Any(u => u.nome == usuarioDto.nome))
         {
