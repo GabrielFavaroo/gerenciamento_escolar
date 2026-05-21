@@ -15,13 +15,16 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
 {
     
     [HttpGet("{id:int}")]
-    public IActionResult encontrarLaboratorioPorId([Range(1,int.MaxValue)]int id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult encontrarLaboratorioPorId([FromRoute][Range(1,int.MaxValue)]int id)
     {
         return Ok(laboratorioUseCases.procurarUm(id));
 
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult listarLaboratorios([FromQuery(Name = "p")][DefaultValue(1)][Range(1,int.MaxValue)]int pagina,
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)
     {
@@ -31,14 +34,16 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
 
     [HttpPost]
     [Authorize(Roles = "Diretor")]
-    public IActionResult criarLaboratorio(LaboratorioDTO laboratorioDto)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public IActionResult criarLaboratorio([FromBody]LaboratorioDTO laboratorioDto)
     {
         return Created("laboratorio", laboratorioUseCases.criar(laboratorioDto));
     }
 
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Diretor")]
-    public IActionResult deletarLaboratorio([Range(1,int.MaxValue)]int id)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public IActionResult deletarLaboratorio([FromRoute][Range(1,int.MaxValue)]int id)
     {
         laboratorioUseCases.remover(id);
         return NoContent();
@@ -46,7 +51,8 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Tecnico,Diretor")]
-    public IActionResult atualizarLaboratorio([Range(1,int.MaxValue)]int id,LaboratorioDTO laboratorioDto)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult atualizarLaboratorio([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]LaboratorioDTO laboratorioDto)
     {
         return Ok(laboratorioUseCases.atualizar(id, laboratorioDto));
     }

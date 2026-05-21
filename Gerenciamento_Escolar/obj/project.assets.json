@@ -736,6 +736,22 @@
           }
         }
       },
+      "Scalar.AspNetCore/2.14.7": {
+        "type": "package",
+        "compile": {
+          "lib/net10.0/Scalar.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0/Scalar.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "System.CodeDom/9.0.0": {
         "type": "package",
         "compile": {
@@ -2634,6 +2650,25 @@
         "postgresql.png"
       ]
     },
+    "Scalar.AspNetCore/2.14.7": {
+      "sha512": "rdLjUXpXp4MExDM07P9iArj/bm49foe+QJm14XCsZs0R51y4r6tIa7O2ILFCnhD7KNWWDQNTkD2T+qx+7NimcQ==",
+      "type": "package",
+      "path": "scalar.aspnetcore/2.14.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "icon.png",
+        "lib/net10.0/Scalar.AspNetCore.dll",
+        "lib/net10.0/Scalar.AspNetCore.xml",
+        "lib/net8.0/Scalar.AspNetCore.dll",
+        "lib/net8.0/Scalar.AspNetCore.xml",
+        "lib/net9.0/Scalar.AspNetCore.dll",
+        "lib/net9.0/Scalar.AspNetCore.xml",
+        "scalar.aspnetcore.2.14.7.nupkg.sha512",
+        "scalar.aspnetcore.nuspec"
+      ]
+    },
     "System.CodeDom/9.0.0": {
       "sha512": "oTE5IfuMoET8yaZP/vdvy9xO47guAv/rOhe4DODuFBN3ySprcQOlXqO3j+e/H/YpKKR5sglrxRaZ2HYOhNJrqA==",
       "type": "package",
@@ -3083,7 +3118,8 @@
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 10.0.7",
       "Microsoft.AspNetCore.OpenApi >= 10.0.3",
       "Microsoft.EntityFrameworkCore.Tools >= 10.0.1",
-      "Npgsql.EntityFrameworkCore.PostgreSQL >= 10.0.0"
+      "Npgsql.EntityFrameworkCore.PostgreSQL >= 10.0.0",
+      "Scalar.AspNetCore >= 2.14.7"
     ]
   },
   "packageFolders": {
@@ -3147,6 +3183,10 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",
             "version": "[10.0.0, )"
+          },
+          "Scalar.AspNetCore": {
+            "target": "Package",
+            "version": "[2.14.7, )"
           }
         },
         "imports": [

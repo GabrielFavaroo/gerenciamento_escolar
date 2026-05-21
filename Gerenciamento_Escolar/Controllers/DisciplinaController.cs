@@ -14,13 +14,16 @@ namespace Gerenciamento_Escolar.Controllers;
 public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : ControllerBase
 {
     [HttpGet("{id:int}")]
-    public IActionResult encontrarDisciplinaPorId([Range(1,int.MaxValue)]int id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult encontrarDisciplinaPorId([FromRoute][Range(1,int.MaxValue)]int id)
     {
         return Ok(disciplinaUseCases.procurarUm(id));
 
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult listarDisciplinas([FromQuery(Name = "p")][DefaultValue(1)][Range(1,int.MaxValue)]int pagina,
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)
     {
@@ -30,14 +33,16 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
 
     [HttpPost]
     [Authorize(Roles = "Coordenador")]
-    public IActionResult criarDisciplina(DisciplinaDTO disciplinaDto)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public IActionResult criarDisciplina([FromBody]DisciplinaDTO disciplinaDto)
     {
         return Created("disciplina",disciplinaUseCases.criar(disciplinaDto));
     }
 
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Coordenador")]
-    public IActionResult deletarDisciplina([Range(1,int.MaxValue)]int id)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public IActionResult deletarDisciplina([FromRoute][Range(1,int.MaxValue)]int id)
     {
         disciplinaUseCases.remover(id);
         return NoContent();
@@ -45,7 +50,8 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Coordenador")]
-    public IActionResult atualizarDisciplina([Range(1,int.MaxValue)]int id,DisciplinaDTO disciplinaDto)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult atualizarDisciplina([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]DisciplinaDTO disciplinaDto)
     {
         return Ok(disciplinaUseCases.atualizar(id, disciplinaDto));
     }

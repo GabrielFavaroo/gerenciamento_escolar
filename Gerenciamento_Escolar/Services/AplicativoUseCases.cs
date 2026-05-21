@@ -17,7 +17,7 @@ public class AplicativoUseCases(Context context)
         context.Aplicativos.Add(aplicativo);
         context.SaveChanges();
         
-        return Result<Aplicativo>.Success(aplicativo,200);
+        return Result<Aplicativo>.Success(aplicativo,201);
     }
     
     public Result<Aplicativo> procurarUm(int id)

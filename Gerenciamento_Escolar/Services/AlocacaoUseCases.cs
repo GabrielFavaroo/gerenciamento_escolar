@@ -48,7 +48,7 @@ public class AlocacaoUseCases(Context context)
         
         context.Alocacoes.Add(alocacao);
         context.SaveChanges();
-        return Result<Alocacao>.Success(alocacao,200);
+        return Result<Alocacao>.Success(alocacao,201);
     }
 
     public Result<Alocacao> ProcurarUm(int id)

@@ -15,6 +15,7 @@ public class ResponseMapper
         return result.statusCode switch
         {
             200 => controller.Ok(result),
+            201 => controller.Created(),
             204 => controller.NoContent(),
             404 => controller.NotFound(result),
             401 => controller.Unauthorized(result),

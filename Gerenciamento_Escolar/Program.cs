@@ -7,6 +7,7 @@ using Gerenciamento_Escolar.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(auth =>{
@@ -89,6 +90,13 @@ if (app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     //app.UseHsts();
     app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "API de gerenciamento escolar";
+        options.Theme = ScalarTheme.Mars;
+        options.DefaultHttpClient =
+            new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    });
 }
 
 

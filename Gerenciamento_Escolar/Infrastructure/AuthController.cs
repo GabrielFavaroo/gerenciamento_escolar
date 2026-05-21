@@ -8,8 +8,11 @@ namespace Gerenciamento_Escolar.Infrastructure;
 [Route("auth")]
 public class AuthController(TokenService tokenService) : ControllerBase
 {
+    
     [HttpPost("login")]
-    public IActionResult login(CredenciaisDeUsuarioDTO usuarioDto)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult login([FromBody]CredenciaisDeUsuarioDTO usuarioDto)
     {
 
         return ResponseMapper.createHttpResponse(tokenService.createToken(new Usuario(usuarioDto.nome, usuarioDto.senha)),this);

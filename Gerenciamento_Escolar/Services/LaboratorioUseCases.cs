@@ -14,7 +14,7 @@ public class LaboratorioUseCases(Context context)
         var laboratorio = new Laboratorio(laboratorioDto.nome, laboratorioDto.qnt_computadores);
         context.Laboratorios.Add(laboratorio);
         context.SaveChanges();
-        return Result<Laboratorio>.Success(laboratorio,200);
+        return Result<Laboratorio>.Success(laboratorio,201);
     }
     public Result<Laboratorio> procurarUm(int id)
     {

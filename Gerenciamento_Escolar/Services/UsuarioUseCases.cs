@@ -37,7 +37,7 @@ public class UsuarioUseCases(Context context,HashServices hashServices)
 
         var returnUser = new RespostaUsuarioDTO(usuario.id, usuario.nome, usuario.email, usuario.tipoUsuario);
         
-        return Result<RespostaUsuarioDTO>.Success(returnUser,200);
+        return Result<RespostaUsuarioDTO>.Success(returnUser,201);
     }
     public Result<RespostaUsuarioDTO> procurarUm(int id)
     {

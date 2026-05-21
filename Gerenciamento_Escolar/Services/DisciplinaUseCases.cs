@@ -18,7 +18,7 @@ public class DisciplinaUseCases(Context context)
         context.Disciplinas.Add(disciplina);
         context.SaveChanges();
         
-        return Result<Disciplina>.Success(disciplina,200);
+        return Result<Disciplina>.Success(disciplina,201);
     }
     public Result<Disciplina> procurarUm(int id)
     {
