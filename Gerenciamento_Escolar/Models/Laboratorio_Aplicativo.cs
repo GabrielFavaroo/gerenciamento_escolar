@@ -12,12 +12,12 @@ public class Laboratorio_Aplicativo
     }
     
     [Column("laboratorio_id")]
-    [ForeignKey("laboratorio.id")]
+    [ForeignKey(nameof(laboratorio))]
     public int laboratorio_id{ get; private set; }
     public virtual Laboratorio laboratorio { get; set; }
     
     [Column("aplicativo_id")]
-    [ForeignKey("aplicativo.id")]
+    [ForeignKey(nameof(aplicativo))]
     public int aplicativo_id{ get; private set; }
     public virtual Aplicativo aplicativo { get; set; }
 }

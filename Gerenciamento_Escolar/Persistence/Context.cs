@@ -25,6 +25,6 @@ public class Context : DbContext
             .HasKey(da => new { da.disciplina_id, da.aplicativo_id });
 
         modelBuilder.Entity<Laboratorio_Aplicativo>()
-            .HasKey(la => new { la.aplicativo_id, la.laboratorio_id });
+            .HasKey(la => new { la.laboratorio_id,la.aplicativo_id  });
     }
 }

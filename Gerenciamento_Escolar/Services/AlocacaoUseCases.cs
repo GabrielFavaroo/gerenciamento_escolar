@@ -20,8 +20,13 @@ public class AlocacaoUseCases(Context context)
 
     public Result<Alocacao> Criar(AlocacaoDTO alocacaoDto)
     {
+        if (!context.Laboratorios.Any(l => l.id == alocacaoDto.laboratorio_id) ||
+            !context.Disciplinas.Any(d => d.id == alocacaoDto.disciplina_id))
+        {
+            return Result<Alocacao>.Failure("Laboratorio ou disciplina informados não foram encontrados",404);
+        }
         
-        
+
         if(!DateIsFree(alocacaoDto.dataAgendamento,alocacaoDto.horario_inicio,alocacaoDto.horario_fim))
             return Result<Alocacao>.Failure("O horario da alocação já esta reservado",409);
 
@@ -33,6 +38,16 @@ public class AlocacaoUseCases(Context context)
         {
             return Result<Alocacao>.Failure("Dia da semana inválido",400);
         };
+        
+        if (!context.Usuarios.Any(u => u.id == alocacaoDto.coordenadorId))
+        {
+            return Result<Alocacao>.Failure("Usuario não encontrado", 404);
+        }
+        if (context.Usuarios.Any(u => u.id == alocacaoDto.coordenadorId && u.tipoUsuario != "Coordenador"))
+        {
+            return Result<Alocacao>.Failure("O usuario informado não é um coordenador", 409);
+        }
+
 
         var alocacao = new Alocacao(alocacaoDto.disciplina_id,
             alocacaoDto.laboratorio_id,
@@ -79,7 +94,14 @@ public class AlocacaoUseCases(Context context)
     public Result<Alocacao> Atualizar(int id,AlocacaoAtualizadaDTO alocacaoAtualizadaDto)
     {   
         
-        if(!DateIsFree(alocacaoAtualizadaDto.dataAgendamento,alocacaoAtualizadaDto.horario_fim,alocacaoAtualizadaDto.horario_fim))
+        if (!context.Laboratorios.Any(l => l.id == alocacaoAtualizadaDto.laboratorio_id) ||
+              !context.Disciplinas.Any(d => d.id == alocacaoAtualizadaDto.disciplina_id))
+        {
+            return Result<Alocacao>.Failure("Laboratorio ou disciplina informados não foram encontrados",404);
+        }
+        
+        
+        if(!DateIsFree(alocacaoAtualizadaDto.dataAgendamento,alocacaoAtualizadaDto.horario_inicio,alocacaoAtualizadaDto.horario_fim))
             return Result<Alocacao>.Failure("O horario da alocação já estava reservado",409);
 
         
@@ -90,6 +112,15 @@ public class AlocacaoUseCases(Context context)
         {
             return Result<Alocacao>.Failure("Dia da semana inválido",400);
         };
+        
+        if (!context.Usuarios.Any(u => u.id == alocacaoAtualizadaDto.coordenadorId))
+        {
+            return Result<Alocacao>.Failure("Usuario não encontrado", 404);
+        }
+        if (context.Usuarios.Any(u => u.id == alocacaoAtualizadaDto.coordenadorId && u.tipoUsuario != "Coordenador"))
+        {
+            return Result<Alocacao>.Failure("O usuario informado não é um coordenador", 409);
+        }
         
         var alocacaoAtualizada = new Alocacao(id, alocacaoAtualizadaDto.disciplina_id,
             alocacaoAtualizadaDto.laboratorio_id,
@@ -105,13 +136,32 @@ public class AlocacaoUseCases(Context context)
         }
         
         
-        if (!labComportsStudents(alocacaoAtualizadaDto)) alocacaoAtualizada.status = nameof(StatusAlocacao.Negado);
-
-        alocacaoAtualizada.status = labHasTheRequiredApps(alocacaoAtualizadaDto)? nameof(StatusAlocacao.Aprovado) : nameof(StatusAlocacao.Negado);
+        if (!labComportsStudents(alocacaoAtualizadaDto) || !labHasTheRequiredApps(alocacaoAtualizadaDto))
+        {
+            alocacaoAtualizada.status = nameof(StatusAlocacao.Negado);
+        }
+        else
+        {
+            alocacaoAtualizada.status = nameof(StatusAlocacao.Aprovado);
+        }
 
         if (alocacaoAtualizada.status == nameof(StatusAlocacao.Aprovado))
         {
-            alocacaoAtualizada.data_aprovacao = new DateTime();
+            if (!context.Usuarios.Any(u => u.id == alocacaoAtualizada.aprovado_por_id))
+            {
+                return Result<Alocacao>.Failure("Usuario não encontrado", 404);
+            }
+            if (context.Usuarios.Any(u => u.id == alocacaoAtualizada.aprovado_por_id && u.tipoUsuario != "Diretor"))
+            {
+                return Result<Alocacao>.Failure("O usuario informado não é um diretor", 409);
+            }
+            
+            alocacaoAtualizada.data_aprovacao = DateTime.Now;
+        }
+        else
+        {
+            alocacaoAtualizada.aprovado_por_id = null;
+            alocacaoAtualizada.data_aprovacao = null;
         }
         
         context.Alocacoes.Update(alocacaoAtualizada);
@@ -178,9 +228,12 @@ public class AlocacaoUseCases(Context context)
             .Where(d => d.id == alocacaoAtualizadaDto.disciplina_id)
             .Select(d => d.alunos_matriculados).FirstOrDefault();
 
-        var maxStudentsPerPc = 2;
+        if (pcs == 0)
+        {
+            return false;}
+        var maxStudentsPerPc = 2.0;
         
-        return !((alunos / pcs) > maxStudentsPerPc);
+        return !(((double)alunos / pcs) > maxStudentsPerPc);
 
 
     }

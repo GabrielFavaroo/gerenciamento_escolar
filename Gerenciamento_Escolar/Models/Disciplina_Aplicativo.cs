@@ -11,12 +11,12 @@ public class Disciplina_Aplicativo
         this.aplicativo_id = aplicativo_id;
     }
     [Column(name:"disciplina_id")]
-    [ForeignKey(name:"disciplina.id")]
+    [ForeignKey(nameof(disciplina))]
     public int disciplina_id{ get; private set; }
     public virtual Disciplina disciplina { get; set; }
 
     [Column(name:"aplicativo_id")]
-    [ForeignKey(name:"aplicativo.id")]
+    [ForeignKey(nameof(aplicativo))]
     public int aplicativo_id{ get; private set; }
     public virtual Aplicativo aplicativo { get; set; }
     

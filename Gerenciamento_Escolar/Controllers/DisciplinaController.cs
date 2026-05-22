@@ -34,6 +34,8 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [HttpPost]
     [Authorize(Roles = "Coordenador")]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult criarDisciplina([FromBody]DisciplinaDTO disciplinaDto)
     {
         return ResponseMapper.createHttpResponse(disciplinaUseCases.criar(disciplinaDto),this);
@@ -50,10 +52,24 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Coordenador")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult atualizarDisciplina([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]DisciplinaDTO disciplinaDto)
     {
         return ResponseMapper.createHttpResponse(disciplinaUseCases.atualizar(id, disciplinaDto),this);
     }
+    
+    
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [HttpPost("vincular_apps")]
+    [Authorize(Roles = "Coordenador")]
+    public IActionResult vincularApps([FromBody]VincularAppsNaDisciplinaDTO disciplinaDto)
+    {
+        return ResponseMapper.createHttpResponse(disciplinaUseCases.vincular( disciplinaDto),this);
+    }
+    
+    
     
     
 }

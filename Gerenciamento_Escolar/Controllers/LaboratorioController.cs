@@ -55,6 +55,15 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     {
         return ResponseMapper.createHttpResponse(laboratorioUseCases.atualizar(id, laboratorioDto),this);
     }
+
+    [HttpPost("vincular_apps")]
+    [Authorize(Roles = "Tecnico")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult vincularApps([FromBody] VincularAppsNoLaboratorioDTO laboratorioDto)
+    {
+        return ResponseMapper.createHttpResponse(laboratorioUseCases.vincular(laboratorioDto), this);
+    }
     
     
 }

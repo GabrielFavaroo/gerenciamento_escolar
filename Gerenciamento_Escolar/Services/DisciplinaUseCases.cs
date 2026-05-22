@@ -1,6 +1,8 @@
+using System.Net;
 using Gerenciamento_Escolar.Dtos;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Persistence;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gerenciamento_Escolar.Services;
@@ -11,6 +13,15 @@ public class DisciplinaUseCases(Context context)
 
     public Result<Disciplina> criar(DisciplinaDTO disciplinaDto)
     {
+        if (!context.Usuarios.Any(u => u.id == disciplinaDto.coordenador_id))
+        {
+            return Result<Disciplina>.Failure("Usuario não encontrado", 404);
+        }
+        if (context.Usuarios.Any(u => u.id == disciplinaDto.coordenador_id && u.tipoUsuario != "Coordenador"))
+        {
+            return Result<Disciplina>.Failure("O usuario informado não é um coordenador", 409);
+        }
+        
         var disciplina = new Disciplina(disciplinaDto.nome,
             disciplinaDto.alunos_matriculados,
             disciplinaDto.descricao,
@@ -45,6 +56,16 @@ public class DisciplinaUseCases(Context context)
     
     public Result<Disciplina> atualizar(int id, DisciplinaDTO disciplinaAtualizadaDto)
     {
+        if (!context.Usuarios.Any(u => u.id == disciplinaAtualizadaDto.coordenador_id))
+        {
+            return Result<Disciplina>.Failure("Usuario não encontrado", 404);
+        }
+        if (context.Usuarios.Any(u => u.id == disciplinaAtualizadaDto.coordenador_id && u.tipoUsuario != "Coordenador"))
+        {
+            return Result<Disciplina>.Failure("O usuario informado não é um coordenador", 409);
+        }
+        
+        
         var disciplinaAtualizada = new Disciplina(id, disciplinaAtualizadaDto.nome,
             disciplinaAtualizadaDto.alunos_matriculados, disciplinaAtualizadaDto.descricao,
             disciplinaAtualizadaDto.coordenador_id);
@@ -52,6 +73,24 @@ public class DisciplinaUseCases(Context context)
         context.SaveChanges();
         return Result<Disciplina>.Success(disciplinaAtualizada,200);
         
+    }
+    
+    
+
+    public Result<string> vincular(VincularAppsNaDisciplinaDTO disciplinaDto)
+    {
+        if (!context.Disciplinas.Any(d => d.id == disciplinaDto.disciplinaId))
+        {
+            return Result<string>.Failure("Disciplina não encontrada", 404);
+        }
+
+        var vinculacoes =
+            disciplinaDto.idsDeAplicativos.Select(appId => new Disciplina_Aplicativo(disciplinaDto.disciplinaId, appId)).ToList();
+
+        context.DisciplinaAplicativos.AddRange(vinculacoes);
+        context.SaveChanges();
+        
+        return Result<string>.Success("Aplicativos vinculados na disciplina", 200);
     }
 
 }

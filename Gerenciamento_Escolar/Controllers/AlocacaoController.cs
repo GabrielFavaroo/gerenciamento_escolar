@@ -39,16 +39,18 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
     }
 
     [HttpPost]
-    [Authorize(Roles = "coordenador")]
+    [Authorize(Roles = "Coordenador")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult criarAlocacao([FromBody]AlocacaoDTO alocacaoDto)
     {
         return ResponseMapper.createHttpResponse(alocacaoUseCases.Criar(alocacaoDto),this);
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Diretor")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult deletarAlocacao([FromRoute][Range(1,int.MaxValue)]int id)
     {
@@ -57,9 +59,10 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "diretor")]
+    [Authorize(Roles = "Diretor")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public IActionResult atualizarAlocacao([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]AlocacaoAtualizadaDTO alocacaoDto)
     {

@@ -45,4 +45,21 @@ public class LaboratorioUseCases(Context context)
         return Result<Laboratorio>.Success(laboratorio,200);
     }
 
+    public Result<string> vincular(VincularAppsNoLaboratorioDTO laboratorioDto)
+    {
+        if (!context.Laboratorios.Any(l => l.id == laboratorioDto.laboratorioId))
+        {
+            return Result<string>.Failure("Laboratorio não encontrado", 404);
+        }
+
+        var vinculacoes =
+            laboratorioDto.idsDeAplicativos.Select(appId =>
+                new Laboratorio_Aplicativo(laboratorioDto.laboratorioId, appId)).ToList();
+        context.LaboratorioAplicativos.AddRange(vinculacoes);
+        context.SaveChanges();
+        
+        return Result<string>.Success("Aplicativos vinculados ao laboratorio",200);
+
+    }
+ 
 }
