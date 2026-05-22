@@ -18,7 +18,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult encontrarDisciplinaPorId([FromRoute][Range(1,int.MaxValue)]int id)
     {
-        return Ok(disciplinaUseCases.procurarUm(id));
+        return ResponseMapper.createHttpResponse(disciplinaUseCases.procurarUm(id),this);
 
     }
 
@@ -27,7 +27,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     public IActionResult listarDisciplinas([FromQuery(Name = "p")][DefaultValue(1)][Range(1,int.MaxValue)]int pagina,
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)
     {
-        return Ok(disciplinaUseCases.listar(pagina, quantidade));
+        return ResponseMapper.createHttpResponse(disciplinaUseCases.listar(pagina, quantidade),this);
         
     }
 
@@ -36,7 +36,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [ProducesResponseType(StatusCodes.Status201Created)]
     public IActionResult criarDisciplina([FromBody]DisciplinaDTO disciplinaDto)
     {
-        return Created("disciplina",disciplinaUseCases.criar(disciplinaDto));
+        return ResponseMapper.createHttpResponse(disciplinaUseCases.criar(disciplinaDto),this);
     }
 
     [HttpDelete("{id:int}")]
@@ -44,8 +44,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult deletarDisciplina([FromRoute][Range(1,int.MaxValue)]int id)
     {
-        disciplinaUseCases.remover(id);
-        return NoContent();
+        return ResponseMapper.createHttpResponse(disciplinaUseCases.remover(id),this);
     }
 
     [HttpPut("{id:int}")]
@@ -53,7 +52,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult atualizarDisciplina([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]DisciplinaDTO disciplinaDto)
     {
-        return Ok(disciplinaUseCases.atualizar(id, disciplinaDto));
+        return ResponseMapper.createHttpResponse(disciplinaUseCases.atualizar(id, disciplinaDto),this);
     }
     
     

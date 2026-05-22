@@ -18,7 +18,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult encontrarAplicativoPorId([FromRoute][Range(1,int.MaxValue)]int id)
     {
-        return Ok(aplicativoUseCases.procurarUm(id));
+        return ResponseMapper.createHttpResponse(aplicativoUseCases.procurarUm(id),this);
 
     }
 
@@ -28,7 +28,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     public IActionResult listarAplicativos([FromQuery(Name = "p")][DefaultValue(1)][Range(1,int.MaxValue)]int pagina,
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)
     {
-        return Ok(aplicativoUseCases.listar(pagina, quantidade));
+        return ResponseMapper.createHttpResponse(aplicativoUseCases.listar(pagina, quantidade),this);
         
     }
 
@@ -37,7 +37,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     [Authorize(Roles = "Tecnico")]
     public IActionResult criarAplicativo([FromBody]AplicativoDTO aplicativoDto)
     {
-        return Created("aplicativo",aplicativoUseCases.criar(aplicativoDto));
+        return ResponseMapper.createHttpResponse(aplicativoUseCases.criar(aplicativoDto),this);
     }
 
     [HttpDelete("{id:int}")]
@@ -45,8 +45,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult deletarAplicativo([FromRoute][Range(1,int.MaxValue)]int id)
     {
-        aplicativoUseCases.remover(id);
-        return NoContent();
+        return ResponseMapper.createHttpResponse(aplicativoUseCases.remover(id),this);
     }
 
     [HttpPut("{id:int}")]
@@ -54,7 +53,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     [Authorize(Roles = "Tecnico")]
     public IActionResult atualizarAplicativo([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]AplicativoDTO aplicativoDto)
     {
-        return Ok(aplicativoUseCases.atualizar(id, aplicativoDto));
+        return ResponseMapper.createHttpResponse(aplicativoUseCases.atualizar(id, aplicativoDto),this);
     }
     
     

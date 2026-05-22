@@ -19,7 +19,7 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult encontrarLaboratorioPorId([FromRoute][Range(1,int.MaxValue)]int id)
     {
-        return Ok(laboratorioUseCases.procurarUm(id));
+        return ResponseMapper.createHttpResponse(laboratorioUseCases.procurarUm(id),this);
 
     }
 
@@ -28,7 +28,7 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     public IActionResult listarLaboratorios([FromQuery(Name = "p")][DefaultValue(1)][Range(1,int.MaxValue)]int pagina,
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)
     {
-        return Ok(laboratorioUseCases.listar(pagina, quantidade));
+        return ResponseMapper.createHttpResponse(laboratorioUseCases.listar(pagina, quantidade),this);
         
     }
 
@@ -37,7 +37,7 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     [ProducesResponseType(StatusCodes.Status201Created)]
     public IActionResult criarLaboratorio([FromBody]LaboratorioDTO laboratorioDto)
     {
-        return Created("laboratorio", laboratorioUseCases.criar(laboratorioDto));
+        return ResponseMapper.createHttpResponse(laboratorioUseCases.criar(laboratorioDto),this);
     }
 
     [HttpDelete("{id:int}")]
@@ -45,8 +45,7 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult deletarLaboratorio([FromRoute][Range(1,int.MaxValue)]int id)
     {
-        laboratorioUseCases.remover(id);
-        return NoContent();
+        return ResponseMapper.createHttpResponse(laboratorioUseCases.remover(id),this);
     }
 
     [HttpPut("{id:int}")]
@@ -54,7 +53,7 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult atualizarLaboratorio([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]LaboratorioDTO laboratorioDto)
     {
-        return Ok(laboratorioUseCases.atualizar(id, laboratorioDto));
+        return ResponseMapper.createHttpResponse(laboratorioUseCases.atualizar(id, laboratorioDto),this);
     }
     
     
