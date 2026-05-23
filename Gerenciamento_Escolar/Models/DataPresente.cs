@@ -12,9 +12,9 @@ public  class DataPresente: ValidationAttribute
             return true;
         }
 
-        DateTime data = (DateTime)value;
+        DateOnly data = (DateOnly)value;
 
-        if (data < DateTime.Now)
+        if (data < DateOnly.FromDateTime(DateTime.Now))
         {
             ErrorMessage = ("A data da alocação não pode ser no passado");
             return false;

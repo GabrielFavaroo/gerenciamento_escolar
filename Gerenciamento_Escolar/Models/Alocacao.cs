@@ -6,7 +6,7 @@ namespace Gerenciamento_Escolar.Models;
 [Table(name:"alocacao")]
 public class Alocacao
 {
-    public Alocacao( int disciplina_id, int laboratorio_id, string dia_da_semana,DateTime data_agendamento, TimeSpan horario_inicio, TimeSpan horario_fim, string status, int? aprovado_por_id, DateTime? data_aprovacao, int? coordenador_id)
+    public Alocacao( int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeSpan horario_inicio, TimeSpan horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
     {
         
         this.disciplina_id = disciplina_id;
@@ -21,7 +21,7 @@ public class Alocacao
         this.coordenador_id = coordenador_id;
     }
 
-    public Alocacao(int id, int disciplina_id, int laboratorio_id, string dia_da_semana,DateTime data_agendamento, TimeSpan horario_inicio, TimeSpan horario_fim, string status, int? aprovado_por_id, DateTime? data_aprovacao, int? coordenador_id)
+    public Alocacao(int id, int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeSpan horario_inicio, TimeSpan horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
     {
         this.id = id;
         this.disciplina_id = disciplina_id;
@@ -58,7 +58,7 @@ public class Alocacao
     public string dia_da_semana { get; set; }
     
     [Column(name: "data_agendamento")]
-    public DateTime data_agendamento { get; set; }
+    public DateOnly data_agendamento { get; set; }
     
     [Column(name: "horario_inicio")]
     public TimeSpan horario_inicio { get; set; }
@@ -74,7 +74,7 @@ public class Alocacao
     
     
     [Column(name: "data_aprovacao")]
-    public DateTime? data_aprovacao { get; set; }
+    public DateOnly? data_aprovacao { get; set; }
     
     [Column(name: "coordenador_id")]
     public int? coordenador_id { get; set; }

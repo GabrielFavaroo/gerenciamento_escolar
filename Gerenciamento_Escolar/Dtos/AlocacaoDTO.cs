@@ -9,7 +9,7 @@ public record AlocacaoDTO(
     string dia_da_semana,
     [DataPresente]
     [Required]
-    DateTime dataAgendamento,
+    DateOnly dataAgendamento,
     TimeSpan horario_inicio,
     TimeSpan horario_fim,
     [Range(1, int.MaxValue)] int coordenadorId);

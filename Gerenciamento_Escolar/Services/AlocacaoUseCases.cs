@@ -25,10 +25,12 @@ public class AlocacaoUseCases(Context context)
         {
             return Result<Alocacao>.Failure("Laboratorio ou disciplina informados não foram encontrados",404);
         }
-        
 
-        if(!DateIsFree(alocacaoDto.dataAgendamento,alocacaoDto.horario_inicio,alocacaoDto.horario_fim))
-            return Result<Alocacao>.Failure("O horario da alocação já esta reservado",409);
+
+        if (!DateIsFree(alocacaoDto.dataAgendamento, alocacaoDto.horario_inicio, alocacaoDto.horario_fim,alocacaoDto.laboratorio_id,null))
+        {
+            return Result<Alocacao>.Failure("O horario da alocação já esta reservado", 409);
+        }
 
 
         var diaFormatado = formatDateName(alocacaoDto.dia_da_semana);
@@ -99,12 +101,14 @@ public class AlocacaoUseCases(Context context)
         {
             return Result<Alocacao>.Failure("Laboratorio ou disciplina informados não foram encontrados",404);
         }
-        
-        
-        if(!DateIsFree(alocacaoAtualizadaDto.dataAgendamento,alocacaoAtualizadaDto.horario_inicio,alocacaoAtualizadaDto.horario_fim))
-            return Result<Alocacao>.Failure("O horario da alocação já estava reservado",409);
 
-        
+
+        if (!DateIsFree(alocacaoAtualizadaDto.dataAgendamento, alocacaoAtualizadaDto.horario_inicio,
+                alocacaoAtualizadaDto.horario_fim,alocacaoAtualizadaDto.laboratorio_id,id))
+        {
+            return Result<Alocacao>.Failure("O horario da alocação já estava reservado", 409);
+        }
+
         var diaFormatado = Regex.Replace(input: alocacaoAtualizadaDto.dia_da_semana,pattern, replacement: "").ToLower();
 
 
@@ -130,7 +134,11 @@ public class AlocacaoUseCases(Context context)
             alocacaoAtualizadaDto.aprovadoPorId,
             alocacaoAtualizadaDto.dataAprovacao, alocacaoAtualizadaDto.coordenadorId);
 
-        if (!Enum.TryParse<StatusAlocacao>(alocacaoAtualizadaDto.status, true, out StatusAlocacao resultado))
+        if (Enum.TryParse<StatusAlocacao>(alocacaoAtualizadaDto.status, true, out StatusAlocacao resultado))
+        {
+            alocacaoAtualizada.status = resultado.ToString();
+        }
+        else
         {
             alocacaoAtualizada.status = nameof(StatusAlocacao.Pendente);
         }
@@ -140,10 +148,7 @@ public class AlocacaoUseCases(Context context)
         {
             alocacaoAtualizada.status = nameof(StatusAlocacao.Negado);
         }
-        else
-        {
-            alocacaoAtualizada.status = nameof(StatusAlocacao.Aprovado);
-        }
+        
 
         if (alocacaoAtualizada.status == nameof(StatusAlocacao.Aprovado))
         {
@@ -155,8 +160,8 @@ public class AlocacaoUseCases(Context context)
             {
                 return Result<Alocacao>.Failure("O usuario informado não é um diretor", 409);
             }
-            
-            alocacaoAtualizada.data_aprovacao = DateTime.Now;
+
+            alocacaoAtualizada.data_aprovacao = DateOnly.FromDateTime(DateTime.Now);
         }
         else
         {
@@ -180,17 +185,13 @@ public class AlocacaoUseCases(Context context)
         
     }
 
-    private bool DateIsFree(DateTime date, TimeSpan startTime,TimeSpan endTime)
+    private bool DateIsFree(DateOnly date, TimeSpan startTime,TimeSpan endTime, int laboratorioId, int? alocacaoIgnorar)
     {
-        if (context.Alocacoes.Any(al =>
-                al.data_agendamento == date
-                && startTime > al.horario_fim || al.horario_inicio > endTime)
-           )
-        {
-            return false;
-        }
-
-        return true;
+        return !context.Alocacoes.Any(
+            al => al.laboratorio_id == laboratorioId 
+                  && al.data_agendamento == date && al.status != "Negado" &&
+                  (alocacaoIgnorar == null || al.id != alocacaoIgnorar)&&
+                  startTime < al.horario_fim && endTime > al.horario_inicio);
     }
 
     private string formatDateName(string dateName)

@@ -9,11 +9,11 @@ public record AlocacaoAtualizadaDTO(
     string dia_da_semana,
     [DataPresente]
     [Required]
-    DateTime dataAgendamento,
+    DateOnly dataAgendamento,
     TimeSpan horario_inicio,
     TimeSpan horario_fim,
     string status,
         int? aprovadoPorId,
-    DateTime? dataAprovacao,
+    DateOnly? dataAprovacao,
     int? coordenadorId
         );

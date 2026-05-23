@@ -60,7 +60,10 @@ builder.Services.Configure<SecuritySettings>(options =>
 
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonDateConverter());
+});
 builder.Services.AddCors(options=>
 options.AddPolicy("AllowRequests", policy=>
 {
