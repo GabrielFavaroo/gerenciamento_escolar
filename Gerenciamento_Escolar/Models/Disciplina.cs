@@ -6,21 +6,27 @@ namespace Gerenciamento_Escolar.Models;
 [Table(name:"disciplina")]
 public class Disciplina
 {
-    public Disciplina( string nome, int alunos_matriculados, string descricao, int coordenador_id)
+    public Disciplina( string nome, int alunos_matriculados, string descricao,int duracao_meses,TimeOnly horario_inicio_aula,TimeOnly horario_fim_aula, int coordenador_id)
     {
         
         this.nome = nome;
         this.alunos_matriculados = alunos_matriculados;
         this.descricao = descricao;
+        this.duracao_meses = duracao_meses;
+        this.horario_inicio_aula = horario_inicio_aula;
+        this.horario_fim_aula = horario_fim_aula;
         this.coordenador_id = coordenador_id;
     }
 
-    public Disciplina(int id, string nome, int alunos_matriculados, string descricao, int coordenador_id)
+    public Disciplina(int id, string nome, int alunos_matriculados, string descricao,int duracao_meses,TimeOnly horario_inicio_aula,TimeOnly horario_fim_aula, int coordenador_id)
     {
         this.id = id;
         this.nome = nome;
         this.alunos_matriculados= alunos_matriculados;
         this.descricao = descricao;
+        this.duracao_meses = duracao_meses;
+        this.horario_inicio_aula = horario_inicio_aula;
+        this.horario_fim_aula = horario_fim_aula;
         this.coordenador_id = coordenador_id;
     }
 
@@ -42,9 +48,19 @@ public class Disciplina
     [Column(name:"descricao")]
     public string descricao{ get; set; }
     
+    [Column(name:"duracao_meses")]
+        public int duracao_meses{ get; set; }
+    
+    [Column(name:"horario_inicio_aula")]
+    public TimeOnly horario_inicio_aula{ get; set; }
+    
+    [Column(name:"horario_fim_aula")]
+    public TimeOnly horario_fim_aula{ get; set; }
+    
     [Column(name:"coordenador_id")]
     public int coordenador_id{ get; set; }
-    
-    public virtual ICollection<Disciplina_Aplicativo> disciplinaAplicativos { get; set; }
+
+    public virtual ICollection<Disciplina_Aplicativo> disciplinaAplicativos { get; set; } =
+        new List<Disciplina_Aplicativo>();
 
 }

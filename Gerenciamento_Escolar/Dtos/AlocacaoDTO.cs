@@ -10,6 +10,6 @@ public record AlocacaoDTO(
     [DataPresente]
     [Required]
     DateOnly dataAgendamento,
-    TimeSpan horario_inicio,
-    TimeSpan horario_fim,
+    TimeOnly horario_inicio,
+    TimeOnly horario_fim,
     [Range(1, int.MaxValue)] int coordenadorId);

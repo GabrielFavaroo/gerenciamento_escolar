@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 using Gerenciamento_Escolar.Infrastructure;
 using Gerenciamento_Escolar.Models;
 using Gerenciamento_Escolar.Persistence;
@@ -41,7 +42,11 @@ builder.Services.AddAuthentication(auth =>{
 builder.Services.AddAuthorization(options => options.FallbackPolicy = null);
 builder.Services.AddTransient<JwtSecurityTokenHandler>();
 builder.Services.AddTransient<TokenService>();
-builder.Services.AddDbContext<Context>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<Context>(options =>
+{
+    options.UseLazyLoadingProxies();
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 
 builder.Services.AddScoped<AlocacaoUseCases>();
@@ -61,7 +66,8 @@ builder.Services.Configure<SecuritySettings>(options =>
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
-{
+{   options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    
     options.JsonSerializerOptions.Converters.Add(new JsonDateConverter());
 });
 builder.Services.AddCors(options=>

@@ -6,7 +6,7 @@ namespace Gerenciamento_Escolar.Models;
 [Table(name:"alocacao")]
 public class Alocacao
 {
-    public Alocacao( int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeSpan horario_inicio, TimeSpan horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
+    public Alocacao( int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeOnly horario_inicio, TimeOnly horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
     {
         
         this.disciplina_id = disciplina_id;
@@ -21,7 +21,7 @@ public class Alocacao
         this.coordenador_id = coordenador_id;
     }
 
-    public Alocacao(int id, int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeSpan horario_inicio, TimeSpan horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
+    public Alocacao(int id, int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeOnly horario_inicio, TimeOnly horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
     {
         this.id = id;
         this.disciplina_id = disciplina_id;
@@ -61,10 +61,10 @@ public class Alocacao
     public DateOnly data_agendamento { get; set; }
     
     [Column(name: "horario_inicio")]
-    public TimeSpan horario_inicio { get; set; }
+    public TimeOnly horario_inicio { get; set; }
     
     [Column(name: "horario_fim")]
-    public TimeSpan horario_fim { get; set; }
+    public TimeOnly horario_fim { get; set; }
     
     [Column(name: "status")]
     public string status { get; set; }

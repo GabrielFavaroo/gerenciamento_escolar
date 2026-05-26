@@ -16,6 +16,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    
     public IActionResult encontrarDisciplinaPorId([FromRoute][Range(1,int.MaxValue)]int id)
     {
         return ResponseMapper.createHttpResponse(disciplinaUseCases.procurarUm(id),this);
@@ -36,6 +37,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public IActionResult criarDisciplina([FromBody]DisciplinaDTO disciplinaDto)
     {
         return ResponseMapper.createHttpResponse(disciplinaUseCases.criar(disciplinaDto),this);
@@ -54,6 +56,7 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public IActionResult atualizarDisciplina([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]DisciplinaDTO disciplinaDto)
     {
         return ResponseMapper.createHttpResponse(disciplinaUseCases.atualizar(id, disciplinaDto),this);
@@ -62,12 +65,25 @@ public class DisciplinaController(DisciplinaUseCases disciplinaUseCases) : Contr
     
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpPost("vincular_apps")]
+    [HttpPut("aplicativos")]
     [Authorize(Roles = "Coordenador")]
     public IActionResult vincularApps([FromBody]VincularAppsNaDisciplinaDTO disciplinaDto)
     {
         return ResponseMapper.createHttpResponse(disciplinaUseCases.vincular( disciplinaDto),this);
     }
+
+    [HttpGet("aplicativos/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult consultarAplicativosVinculados([FromRoute] int id,
+        [FromQuery(Name = "p")] [DefaultValue(1)] [Range(1, int.MaxValue)] int pagina,
+        [FromQuery(Name = "q")] [DefaultValue(10)] [Range(1, int.MaxValue)]
+        int quantidade)
+    {
+
+        return ResponseMapper.createHttpResponse(disciplinaUseCases.consultarApps(id, pagina, quantidade),this);
+    }
+    
     
     
     

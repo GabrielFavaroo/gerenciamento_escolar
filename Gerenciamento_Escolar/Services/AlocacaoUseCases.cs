@@ -26,6 +26,12 @@ public class AlocacaoUseCases(Context context)
             return Result<Alocacao>.Failure("Laboratorio ou disciplina informados não foram encontrados",404);
         }
 
+        if (!TimeService.IsTimePeriodCorrect(alocacaoDto.horario_inicio, alocacaoDto.horario_fim))
+        {
+            return Result<Alocacao>.Failure(
+                "É impossivel criar uma alocação com o horario de inicio maior ou igual ao de fim",422);
+        }
+
 
         if (!DateIsFree(alocacaoDto.dataAgendamento, alocacaoDto.horario_inicio, alocacaoDto.horario_fim,alocacaoDto.laboratorio_id,null))
         {
@@ -62,6 +68,7 @@ public class AlocacaoUseCases(Context context)
             null,
             alocacaoDto.coordenadorId
             );
+        
         
         context.Alocacoes.Add(alocacao);
         context.SaveChanges();
@@ -102,6 +109,11 @@ public class AlocacaoUseCases(Context context)
             return Result<Alocacao>.Failure("Laboratorio ou disciplina informados não foram encontrados",404);
         }
 
+        if (!TimeService.IsTimePeriodCorrect(alocacaoAtualizadaDto.horario_inicio, alocacaoAtualizadaDto.horario_fim))
+        {
+            return Result<Alocacao>.Failure(
+                "É impossivel criar uma alocação com o horario de inicio maior ou igual ao de fim",422);
+        }
 
         if (!DateIsFree(alocacaoAtualizadaDto.dataAgendamento, alocacaoAtualizadaDto.horario_inicio,
                 alocacaoAtualizadaDto.horario_fim,alocacaoAtualizadaDto.laboratorio_id,id))
@@ -185,7 +197,7 @@ public class AlocacaoUseCases(Context context)
         
     }
 
-    private bool DateIsFree(DateOnly date, TimeSpan startTime,TimeSpan endTime, int laboratorioId, int? alocacaoIgnorar)
+    private bool DateIsFree(DateOnly date, TimeOnly startTime,TimeOnly endTime, int laboratorioId, int? alocacaoIgnorar)
     {
         return !context.Alocacoes.Any(
             al => al.laboratorio_id == laboratorioId 

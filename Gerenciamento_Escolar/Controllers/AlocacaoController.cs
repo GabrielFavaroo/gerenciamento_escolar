@@ -44,6 +44,7 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public IActionResult criarAlocacao([FromBody]AlocacaoDTO alocacaoDto)
     {
         return ResponseMapper.createHttpResponse(alocacaoUseCases.Criar(alocacaoDto),this);
@@ -64,6 +65,7 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public IActionResult atualizarAlocacao([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]AlocacaoAtualizadaDTO alocacaoDto)
     {
         return ResponseMapper.createHttpResponse(alocacaoUseCases.Atualizar(id, alocacaoDto),this);

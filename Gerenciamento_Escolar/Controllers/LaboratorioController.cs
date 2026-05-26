@@ -56,7 +56,7 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
         return ResponseMapper.createHttpResponse(laboratorioUseCases.atualizar(id, laboratorioDto),this);
     }
 
-    [HttpPost("vincular_apps")]
+    [HttpPut("aplicativos")]
     [Authorize(Roles = "Tecnico")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -65,5 +65,18 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
         return ResponseMapper.createHttpResponse(laboratorioUseCases.vincular(laboratorioDto), this);
     }
     
+    
+    
+    [HttpGet("aplicativos/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult consultarAplicativosVinculados([FromRoute] int id,
+        [FromQuery(Name = "p")] [DefaultValue(1)] [Range(1, int.MaxValue)] int pagina,
+        [FromQuery(Name = "q")] [DefaultValue(10)] [Range(1, int.MaxValue)]
+        int quantidade)
+    {
+
+        return ResponseMapper.createHttpResponse(laboratorioUseCases.consultarApps(id, pagina, quantidade),this);
+    }
     
 }

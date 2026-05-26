@@ -23,7 +23,7 @@ public class AplicativoController(AplicativoUseCases aplicativoUseCases) : Contr
     }
 
     [HttpGet]
-    [Authorize(Roles = "Tecnico")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult listarAplicativos([FromQuery(Name = "p")][DefaultValue(1)][Range(1,int.MaxValue)]int pagina,
         [FromQuery(Name = "q")][DefaultValue(10)][Range(1,int.MaxValue)]int quantidade)

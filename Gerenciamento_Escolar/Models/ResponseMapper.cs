@@ -21,6 +21,7 @@ public class ResponseMapper
             401 => controller.Unauthorized(result),
             409 => controller.Conflict(result),
             403 => controller.Forbid(),
+            422 => controller.UnprocessableEntity(result),
 
             _ => controller.StatusCode(500, new { message = "Ocorreu um problema inesperado" })
         };

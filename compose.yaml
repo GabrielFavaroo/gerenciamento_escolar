@@ -1,6 +1,6 @@
 ﻿services:
   gerenciamento_escolar:
-    image: gabrielfavar0/escola:v6.2.0
+    image: gabrielfavar0/escola:v6.5.1
     build:
       context: .
       dockerfile: Dockerfile

@@ -21,10 +21,36 @@ public class Context : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
         modelBuilder.Entity<Disciplina_Aplicativo>()
             .HasKey(da => new { da.disciplina_id, da.aplicativo_id });
 
+        
+        modelBuilder.Entity<Disciplina_Aplicativo>()
+            .HasOne(da => da.disciplina)
+            .WithMany(d => d.disciplinaAplicativos) 
+            .HasForeignKey(da => da.disciplina_id);
+
+        modelBuilder.Entity<Disciplina_Aplicativo>()
+            .HasOne(da => da.aplicativo)
+            .WithMany(a => a.disciplinaAplicativos)
+            .HasForeignKey(da => da.aplicativo_id);
+
+
+        
+        
         modelBuilder.Entity<Laboratorio_Aplicativo>()
-            .HasKey(la => new { la.laboratorio_id,la.aplicativo_id  });
+            .HasKey(la => new { la.laboratorio_id, la.aplicativo_id });
+
+        modelBuilder.Entity<Laboratorio_Aplicativo>()
+            .HasOne(la => la.laboratorio)
+            .WithMany(l => l.laboratorioAplicativos)
+            .HasForeignKey(la => la.laboratorio_id);
+
+        modelBuilder.Entity<Laboratorio_Aplicativo>()
+            .HasOne(la => la.aplicativo)
+            .WithMany(a => a.laboratorioAplicativos)
+            .HasForeignKey(la => la.aplicativo_id);
     }
 }

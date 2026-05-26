@@ -35,6 +35,7 @@ public class Laboratorio
     [Column(name:"qnt_computadores")]
     public int qnt_computadores{ get; private set; }
 
-    public virtual ICollection<Laboratorio_Aplicativo> laboratorioAplicativos { get; set; }
+    public virtual ICollection<Laboratorio_Aplicativo> laboratorioAplicativos { get; set; } =
+        new List<Laboratorio_Aplicativo>();
 
 }

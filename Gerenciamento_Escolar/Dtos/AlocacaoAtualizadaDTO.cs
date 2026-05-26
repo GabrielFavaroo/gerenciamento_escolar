@@ -10,8 +10,8 @@ public record AlocacaoAtualizadaDTO(
     [DataPresente]
     [Required]
     DateOnly dataAgendamento,
-    TimeSpan horario_inicio,
-    TimeSpan horario_fim,
+    TimeOnly horario_inicio,
+    TimeOnly horario_fim,
     string status,
         int? aprovadoPorId,
     DateOnly? dataAprovacao,
