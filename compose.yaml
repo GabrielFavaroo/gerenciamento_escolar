@@ -15,7 +15,18 @@
       - JWT_SECRET_KEY=chaveultrasecretaquenemeunemninguemsabe
       - PASSWORD_SALT=saldosalpessuicosproduzidoporelfosecolhidoporumiete
       - ASPNETCORE_ENVIRONMENT=Development
-        
+  
+  front_end:
+    image: gabrielfavar0/front-escola:v1.0.0
+    ports:
+      - "8080:80"
+    restart: always
+    networks:
+      - escola-rede
+  
+  
+  
+    
   db:
     image: postgres:18-alpine
     environment:
