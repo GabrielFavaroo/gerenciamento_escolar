@@ -1,6 +1,6 @@
 ﻿services:
   gerenciamento_escolar:
-    image: gabrielfavar0/escola:v6.5.1
+    image: gabrielfavar0/escola:v6.6.0
     build:
       context: .
       dockerfile: Dockerfile
@@ -17,7 +17,7 @@
       - ASPNETCORE_ENVIRONMENT=Development
   
   front_end:
-    image: gabrielfavar0/front-escola:v1.0.0
+    image: gabrielfavar0/front-escola:v2.0.0
     ports:
       - "8080:80"
     restart: always
@@ -41,10 +41,31 @@
       - escola-rede
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U usuario -d escolaDb" ]
-      interval: 3s
-      timeout: 3s
-      retries: 5
-      
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    
+  backup:
+    image: prodrigestivill/postgres-backup-local:18-alpine
+    restart: always
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      db:
+        condition: "service_healthy"
+    networks:
+      - escola-rede
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=escolaDb
+      - POSTGRES_USER=usuario
+      - POSTGRES_PASSWORD=1234
+      - SCHEDULE="0 0 2 * * *"
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_SUFFIX=.sql.gz
+    
+    
 networks:
   escola-rede:
     driver: bridge

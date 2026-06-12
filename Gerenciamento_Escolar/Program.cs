@@ -85,8 +85,20 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     
     var context = services.GetRequiredService<Context>();
-        
-    context.Database.Migrate(); 
+    
+    
+    var hashService = services.GetRequiredService<HashServices>();
+    context.Database.Migrate();
+
+    if (!context.Usuarios.Any())
+    {
+        context.Usuarios.Add(new Usuario(
+            "primeirousuario",
+            "primeiro@email.com",
+            hashService.toHashPassword("1234"),
+            "Diretor"));
+        context.SaveChanges();
+    }
         
     
     
