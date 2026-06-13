@@ -1,6 +1,6 @@
 ﻿services:
   gerenciamento_escolar:
-    image: gabrielfavar0/escola:v6.6.0
+    image: gabrielfavar0/escola:v6.6.1
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,13 +16,13 @@
       - PASSWORD_SALT=saldosalpessuicosproduzidoporelfosecolhidoporumiete
       - ASPNETCORE_ENVIRONMENT=Development
   
-  front_end:
-    image: gabrielfavar0/front-escola:v2.0.0
-    ports:
-      - "8080:80"
-    restart: always
-    networks:
-      - escola-rede
+  ##front_end:
+    ##image: gabrielfavar0/front-escola:v3
+    ##ports:
+    ##  - "8080:80"
+    ##restart: always
+    ##networks:
+    ##  - escola-rede
   
   
   

@@ -6,9 +6,9 @@ namespace Gerenciamento_Escolar.Models;
 [Table(name:"alocacao")]
 public class Alocacao
 {
-    public Alocacao( int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeOnly horario_inicio, TimeOnly horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
+    public Alocacao(string titulo, int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeOnly horario_inicio, TimeOnly horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
     {
-        
+        this.titulo = titulo;
         this.disciplina_id = disciplina_id;
         this.laboratorio_id = laboratorio_id;
         this.dia_da_semana = dia_da_semana;
@@ -21,9 +21,10 @@ public class Alocacao
         this.coordenador_id = coordenador_id;
     }
 
-    public Alocacao(int id, int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeOnly horario_inicio, TimeOnly horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
+    public Alocacao(int id,string titulo, int disciplina_id, int laboratorio_id, string dia_da_semana,DateOnly data_agendamento, TimeOnly horario_inicio, TimeOnly horario_fim, string status, int? aprovado_por_id, DateOnly? data_aprovacao, int? coordenador_id)
     {
         this.id = id;
+        this.titulo = titulo;
         this.disciplina_id = disciplina_id;
         this.laboratorio_id = laboratorio_id;
         this.dia_da_semana = dia_da_semana;
@@ -44,6 +45,9 @@ public class Alocacao
     [Column(name:"id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int id { get; private set; }
+    
+    [Column(name:"titulo")]
+    public string titulo { get; set; }
     
     [Column(name:"disciplina_id")]
     [ForeignKey(name:"disciplina.id")]

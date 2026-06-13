@@ -9,4 +9,4 @@ public record DisciplinaDTO(
 [Range(1,int.MaxValue)]int duracao_meses,
 TimeOnly horario_inicio_aula,
 TimeOnly horario_fim_aula,
-[Range(1,int.MaxValue)]int coordenador_id);
+[Required(AllowEmptyStrings = false)]string nomeCoordenador);

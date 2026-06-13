@@ -27,13 +27,13 @@ public class Laboratorio
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column(name:"id")]
-    public int id{ get; private set; }
+    public int id{ get;  set; }
     
     [Column(name:"nome")]
     public string nome{ get; set; }
     
     [Column(name:"qnt_computadores")]
-    public int qnt_computadores{ get; private set; }
+    public int qnt_computadores{ get; set; }
 
     public virtual ICollection<Laboratorio_Aplicativo> laboratorioAplicativos { get; set; } =
         new List<Laboratorio_Aplicativo>();

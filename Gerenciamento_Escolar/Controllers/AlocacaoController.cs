@@ -60,7 +60,7 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Diretor")]
+    [Authorize(Roles = "Diretor,Coordenador")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -69,6 +69,19 @@ public class AlocacaoController(AlocacaoUseCases alocacaoUseCases) : ControllerB
     public IActionResult atualizarAlocacao([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]AlocacaoAtualizadaDTO alocacaoDto)
     {
         return ResponseMapper.createHttpResponse(alocacaoUseCases.Atualizar(id, alocacaoDto),this);
+    }
+    
+    [HttpPatch("status/{id:int}")]
+    [Authorize(Roles = "Diretor")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public IActionResult alterarStatusAlocacao([FromRoute][Range(1,int.MaxValue)]int id,[FromBody]StatusDTO statusDTO)
+    {
+        string nome = User.Identity?.Name;
+        return ResponseMapper.createHttpResponse(alocacaoUseCases.AtualizarStatus(id, statusDTO.status,nome),this);
     }
     
     

@@ -67,16 +67,16 @@ public class LaboratorioController(LaboratorioUseCases laboratorioUseCases) : Co
     
     
     
-    [HttpGet("aplicativos/{id:int}")]
+    [HttpGet("aplicativos")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult consultarAplicativosVinculados([FromRoute] int id,
+    public IActionResult consultarAplicativosVinculados(
         [FromQuery(Name = "p")] [DefaultValue(1)] [Range(1, int.MaxValue)] int pagina,
         [FromQuery(Name = "q")] [DefaultValue(10)] [Range(1, int.MaxValue)]
         int quantidade)
     {
 
-        return ResponseMapper.createHttpResponse(laboratorioUseCases.consultarApps(id, pagina, quantidade),this);
+        return ResponseMapper.createHttpResponse(laboratorioUseCases.consultarApps( pagina, quantidade),this);
     }
     
 }

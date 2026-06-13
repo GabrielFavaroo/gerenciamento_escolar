@@ -17,20 +17,19 @@ public class DisciplinaUseCases(Context context)
         {
             return Result<Disciplina>.Failure("É impossivel criar uma disciplina com horario de inicio da aula maior ou igual ao horario de fim", 422);
         }
+
+        var coordenador =
+            context.Usuarios.FirstOrDefault(u => u.nome == disciplinaDto.nome && u.tipoUsuario == "Coordenador");
         
-        if (!context.Usuarios.Any(u => u.id == disciplinaDto.coordenador_id))
+        if(coordenador == null)
         {
-            return Result<Disciplina>.Failure("Usuario não encontrado", 404);
-        }
-        if (context.Usuarios.Any(u => u.id == disciplinaDto.coordenador_id && u.tipoUsuario != "Coordenador"))
-        {
-            return Result<Disciplina>.Failure("O usuario informado não é um coordenador", 409);
+            return Result<Disciplina>.Failure("Usuario invalido", 404);
         }
         
         var disciplina = new Disciplina(disciplinaDto.nome,
             disciplinaDto.alunos_matriculados,
             disciplinaDto.descricao,disciplinaDto.duracao_meses,disciplinaDto.horario_inicio_aula,disciplinaDto.horario_fim_aula,
-            disciplinaDto.coordenador_id);
+            coordenador.id);
         context.Disciplinas.Add(disciplina);
         
         
@@ -43,7 +42,7 @@ public class DisciplinaUseCases(Context context)
         var disciplina = context.Disciplinas.Find(id);
         if (disciplina == null)
         {
-            Result<Disciplina>.Failure("Disciplina não encontrada",404);
+            return Result<Disciplina>.Failure("Disciplina não encontrada",404);
         }
         return Result<Disciplina>.Success(disciplina,200);
     }
@@ -67,23 +66,30 @@ public class DisciplinaUseCases(Context context)
         {
             return Result<Disciplina>.Failure("É impossivel criar uma disciplina com horario de inicio da aula maior ou igual ao horario de fim", 422);
         }
-        
-        if (!context.Usuarios.Any(u => u.id == disciplinaAtualizadaDto.coordenador_id))
+
+        var disciplina = context.Disciplinas.Find(id);
+        if (disciplina == null)
         {
-            return Result<Disciplina>.Failure("Usuario não encontrado", 404);
+            return Result<Disciplina>.Failure("Disciplina não encontrada para atualização", 404);
         }
-        if (context.Usuarios.Any(u => u.id == disciplinaAtualizadaDto.coordenador_id && u.tipoUsuario != "Coordenador"))
+
+        var coordenador = context.Usuarios.FirstOrDefault(u => u.nome == disciplinaAtualizadaDto.nomeCoordenador && u.tipoUsuario == "Coordenador");
+        
+        if (coordenador == null)
         {
-            return Result<Disciplina>.Failure("O usuario informado não é um coordenador", 409);
+            return Result<Disciplina>.Failure("Usuário coordenador inválido ou não encontrado", 404);
         }
         
-        
-        var disciplinaAtualizada = new Disciplina(id, disciplinaAtualizadaDto.nome,
-            disciplinaAtualizadaDto.alunos_matriculados, disciplinaAtualizadaDto.descricao,disciplinaAtualizadaDto.duracao_meses,disciplinaAtualizadaDto.horario_inicio_aula,disciplinaAtualizadaDto.horario_fim_aula,
-            disciplinaAtualizadaDto.coordenador_id);
-        context.Disciplinas.Update(disciplinaAtualizada);
+        disciplina.nome = disciplinaAtualizadaDto.nome;
+        disciplina.alunos_matriculados = disciplinaAtualizadaDto.alunos_matriculados;
+        disciplina.descricao = disciplinaAtualizadaDto.descricao;
+        disciplina.duracao_meses = disciplinaAtualizadaDto.duracao_meses;
+        disciplina.horario_inicio_aula = disciplinaAtualizadaDto.horario_inicio_aula;
+        disciplina.horario_fim_aula = disciplinaAtualizadaDto.horario_fim_aula;
+        disciplina.coordenador_id = coordenador.id; 
+        context.Disciplinas.Update(disciplina);
         context.SaveChanges();
-        return Result<Disciplina>.Success(disciplinaAtualizada,200);
+        return Result<Disciplina>.Success(disciplina,200);
         
     }
     
@@ -91,40 +97,45 @@ public class DisciplinaUseCases(Context context)
 
     public Result<string> vincular(VincularAppsNaDisciplinaDTO disciplinaDto)
     {
-        if (!context.Disciplinas.Any(d => d.id == disciplinaDto.disciplinaId))
+        var disciplina = context.Disciplinas.FirstOrDefault(d => d.nome == disciplinaDto.disciplina);
+        
+        if (disciplina == null)
         {
             return Result<string>.Failure("Disciplina não encontrada", 404);
         }
 
-        var appsLimpos = disciplinaDto.idsDeAplicativos.Distinct().ToList();
+        var appsLimpos = disciplinaDto.aplicativos.Distinct().ToList();
 
         if (appsLimpos.Any())
         {
-            var appsEncontrados = context.Aplicativos.Count(a => appsLimpos.Contains(a.id));
-            if (appsEncontrados != appsLimpos.Count)
+            var appsNoBanco = context.Aplicativos
+                .Where(app => appsLimpos.Contains(app.nome))
+                .Select(app => new { app.id, app.nome })
+                .ToList();
+
+            if (appsNoBanco.Count != appsLimpos.Count)
             {
-                return Result<string>.Failure("Um ou mais aplicativos não foram encontrados", 404);
+                var nomesEncontrados = appsNoBanco.Select(a => a.nome).ToList();
+                var appFaltante = appsLimpos.FirstOrDefault(nome => !nomesEncontrados.Contains(nome));
+
+                return Result<string>.Failure($"O aplicativo '{appFaltante}' não foi encontrado no sistema", 404);
             }
 
+            var idsAppsJaVinculados = context.DisciplinaAplicativos.Where(da => da.disciplina_id == disciplina.id)
+                .Select(da => da.aplicativo_id).ToList();
+            
+            var idsDosApps = appsNoBanco.Select(a => a.id).ToList();
+
+            var appsRestantes = idsDosApps.Except(idsAppsJaVinculados);
+            
+            foreach (var idApp in appsRestantes)
+            {
+                var vinculo = new Disciplina_Aplicativo(disciplina.id, idApp);
+                
+                context.DisciplinaAplicativos.Add(vinculo);
+            }
         }
         
-        var appsExistentes = context.DisciplinaAplicativos
-            .Where(da => da.disciplina_id == disciplinaDto.disciplinaId).ToList();
-
-        var idsAtuais = appsExistentes.Select(e => e.aplicativo_id).ToList();
-
-        var appsRemover = appsExistentes.
-            Where(atual => !appsLimpos.Contains(atual.aplicativo_id)).ToList();
-
-        
-        var add = appsLimpos
-            .Where(id => !idsAtuais.Contains(id))
-            .Select(id => 
-                new Disciplina_Aplicativo(disciplina_id: disciplinaDto.disciplinaId, id)).ToList();
-        
-        if(appsRemover.Any()) context.DisciplinaAplicativos.RemoveRange(appsRemover);
-        
-        if(add.Any()) context.DisciplinaAplicativos.AddRange(add);
         
         context.SaveChanges();
         
@@ -132,26 +143,28 @@ public class DisciplinaUseCases(Context context)
     }
 
 
-    public Result<ListaDeAplicativosVinculadosDTO> consultarApps(int id, int pagina, int quantidade)
+    public Result<ListaGeralDisciplinasComAppsDTO> consultarApps(int pagina, int quantidade)
     {
-        
-        var disciplina = context.Disciplinas.Find(id);
-        if (disciplina == null)
-        {
-            return Result<ListaDeAplicativosVinculadosDTO>.Failure("Disciplina não encontrada", 404);
-        }
-        
-        var apps = context.DisciplinaAplicativos
-            .Where(d => d.disciplina_id == id)
+        var disciplinasComApps = context.Disciplinas
             .Skip((pagina - 1) * quantidade)
             .Take(quantidade)
-            .Select(da => new AplicativoVinculadoDTO(
-                da.aplicativo_id,
-                da.aplicativo.nome)).ToList();
-            
-            
-        
-        return Result<ListaDeAplicativosVinculadosDTO>.Success(new ListaDeAplicativosVinculadosDTO(pagina,quantidade, apps),200);
+            .Select(d => new DisciplinaItemComAppsDTO(
+                d.id,
+                d.nome,
+                d.descricao,
+                context.DisciplinaAplicativos
+                    .Where(da => da.disciplina_id == d.id)
+                    .Select(da => new AplicativoVinculadoDTO(
+                        da.aplicativo_id,
+                        da.aplicativo.nome
+                    ))
+                    .ToList()
+            ))
+            .ToList();
+
+        var resultado = new ListaGeralDisciplinasComAppsDTO(pagina, quantidade, disciplinasComApps);
+    
+        return Result<ListaGeralDisciplinasComAppsDTO>.Success(resultado, 200);
     }
 
 }

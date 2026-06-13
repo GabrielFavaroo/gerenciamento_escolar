@@ -20,10 +20,25 @@ public class AlocacaoUseCases(Context context)
 
     public Result<Alocacao> Criar(AlocacaoDTO alocacaoDto)
     {
-        if (!context.Laboratorios.Any(l => l.id == alocacaoDto.laboratorio_id) ||
-            !context.Disciplinas.Any(d => d.id == alocacaoDto.disciplina_id))
+        var disciplina = context.Disciplinas.FirstOrDefault(d => d.nome == alocacaoDto.disciplina_nome);
+        
+        if (disciplina == null)
         {
-            return Result<Alocacao>.Failure("Laboratorio ou disciplina informados não foram encontrados",404);
+            return Result<Alocacao>.Failure("A disciplina informada não foi encontrada",404);
+        }
+        
+        var laboratorio = context.Laboratorios.FirstOrDefault(l => l.nome == alocacaoDto.laboratorio_nome);
+
+        if (laboratorio == null)
+        {
+            return Result<Alocacao>.Failure("O laboratorio informado não foi encontrado",404);
+        }
+        
+        var coordenador = context.Usuarios.FirstOrDefault(u => u.nome == alocacaoDto.coordenador_nome && u.tipoUsuario == "Coordenador");
+
+        if (coordenador == null)
+        {
+            return Result<Alocacao>.Failure("Usuario invalido", 409);
         }
 
         if (!TimeService.IsTimePeriodCorrect(alocacaoDto.horario_inicio, alocacaoDto.horario_fim))
@@ -33,7 +48,7 @@ public class AlocacaoUseCases(Context context)
         }
 
 
-        if (!DateIsFree(alocacaoDto.dataAgendamento, alocacaoDto.horario_inicio, alocacaoDto.horario_fim,alocacaoDto.laboratorio_id,null))
+        if (!DateIsFree(alocacaoDto.dataAgendamento, alocacaoDto.horario_inicio, alocacaoDto.horario_fim,laboratorio.id,null))
         {
             return Result<Alocacao>.Failure("O horario da alocação já esta reservado", 409);
         }
@@ -47,18 +62,11 @@ public class AlocacaoUseCases(Context context)
             return Result<Alocacao>.Failure("Dia da semana inválido",400);
         };
         
-        if (!context.Usuarios.Any(u => u.id == alocacaoDto.coordenadorId))
-        {
-            return Result<Alocacao>.Failure("Usuario não encontrado", 404);
-        }
-        if (context.Usuarios.Any(u => u.id == alocacaoDto.coordenadorId && u.tipoUsuario != "Coordenador"))
-        {
-            return Result<Alocacao>.Failure("O usuario informado não é um coordenador", 409);
-        }
+        
 
 
-        var alocacao = new Alocacao(alocacaoDto.disciplina_id,
-            alocacaoDto.laboratorio_id,
+        var alocacao = new Alocacao(alocacaoDto.titulo,disciplina.id,
+            laboratorio.id,
             diaFormatado,
             alocacaoDto.dataAgendamento,
             alocacaoDto.horario_inicio,
@@ -66,7 +74,7 @@ public class AlocacaoUseCases(Context context)
             nameof(StatusAlocacao.Pendente),
             null,
             null,
-            alocacaoDto.coordenadorId
+            coordenador.id
             );
         
         
@@ -101,14 +109,21 @@ public class AlocacaoUseCases(Context context)
     }
     
     public Result<Alocacao> Atualizar(int id,AlocacaoAtualizadaDTO alocacaoAtualizadaDto)
-    {   
-        
-        if (!context.Laboratorios.Any(l => l.id == alocacaoAtualizadaDto.laboratorio_id) ||
-              !context.Disciplinas.Any(d => d.id == alocacaoAtualizadaDto.disciplina_id))
+    {
+        var laboratorio = context.Laboratorios.FirstOrDefault(l => l.nome == alocacaoAtualizadaDto.laboratorio_nome);
+
+        if (laboratorio == null)
         {
-            return Result<Alocacao>.Failure("Laboratorio ou disciplina informados não foram encontrados",404);
+            return Result<Alocacao>.Failure("O laboratorio informado não foi encontrado",404);
         }
 
+        var disciplina = context.Disciplinas.FirstOrDefault(d => d.nome == alocacaoAtualizadaDto.disciplina_nome);    
+
+        if (disciplina == null)
+        {
+            return Result<Alocacao>.Failure("A disciplina informada não foi encontrada",404);
+        }
+        
         if (!TimeService.IsTimePeriodCorrect(alocacaoAtualizadaDto.horario_inicio, alocacaoAtualizadaDto.horario_fim))
         {
             return Result<Alocacao>.Failure(
@@ -116,7 +131,7 @@ public class AlocacaoUseCases(Context context)
         }
 
         if (!DateIsFree(alocacaoAtualizadaDto.dataAgendamento, alocacaoAtualizadaDto.horario_inicio,
-                alocacaoAtualizadaDto.horario_fim,alocacaoAtualizadaDto.laboratorio_id,id))
+                alocacaoAtualizadaDto.horario_fim,laboratorio.id,id))
         {
             return Result<Alocacao>.Failure("O horario da alocação já estava reservado", 409);
         }
@@ -128,58 +143,20 @@ public class AlocacaoUseCases(Context context)
         {
             return Result<Alocacao>.Failure("Dia da semana inválido",400);
         };
-        
-        if (!context.Usuarios.Any(u => u.id == alocacaoAtualizadaDto.coordenadorId))
-        {
-            return Result<Alocacao>.Failure("Usuario não encontrado", 404);
-        }
-        if (context.Usuarios.Any(u => u.id == alocacaoAtualizadaDto.coordenadorId && u.tipoUsuario != "Coordenador"))
-        {
-            return Result<Alocacao>.Failure("O usuario informado não é um coordenador", 409);
-        }
-        
-        var alocacaoAtualizada = new Alocacao(id, alocacaoAtualizadaDto.disciplina_id,
-            alocacaoAtualizadaDto.laboratorio_id,
-            diaFormatado,alocacaoAtualizadaDto.dataAgendamento,
-            alocacaoAtualizadaDto.horario_inicio, alocacaoAtualizadaDto.horario_fim,
-            alocacaoAtualizadaDto.status,
-            alocacaoAtualizadaDto.aprovadoPorId,
-            alocacaoAtualizadaDto.dataAprovacao, alocacaoAtualizadaDto.coordenadorId);
 
-        if (Enum.TryParse<StatusAlocacao>(alocacaoAtualizadaDto.status, true, out StatusAlocacao resultado))
-        {
-            alocacaoAtualizada.status = resultado.ToString();
-        }
-        else
-        {
-            alocacaoAtualizada.status = nameof(StatusAlocacao.Pendente);
-        }
-        
-        
-        if (!labComportsStudents(alocacaoAtualizadaDto) || !labHasTheRequiredApps(alocacaoAtualizadaDto))
-        {
-            alocacaoAtualizada.status = nameof(StatusAlocacao.Negado);
-        }
-        
 
-        if (alocacaoAtualizada.status == nameof(StatusAlocacao.Aprovado))
-        {
-            if (!context.Usuarios.Any(u => u.id == alocacaoAtualizada.aprovado_por_id))
-            {
-                return Result<Alocacao>.Failure("Usuario não encontrado", 404);
-            }
-            if (context.Usuarios.Any(u => u.id == alocacaoAtualizada.aprovado_por_id && u.tipoUsuario != "Diretor"))
-            {
-                return Result<Alocacao>.Failure("O usuario informado não é um diretor", 409);
-            }
 
-            alocacaoAtualizada.data_aprovacao = DateOnly.FromDateTime(DateTime.Now);
-        }
-        else
-        {
-            alocacaoAtualizada.aprovado_por_id = null;
-            alocacaoAtualizada.data_aprovacao = null;
-        }
+        var alocacaoAtualizada = context.Alocacoes.Find(id);
+
+        alocacaoAtualizada.titulo = alocacaoAtualizadaDto.titulo;
+        alocacaoAtualizada.disciplina_id = disciplina.id;
+        alocacaoAtualizada.laboratorio_id = laboratorio.id;
+        alocacaoAtualizada.dia_da_semana = diaFormatado;
+        alocacaoAtualizada.data_agendamento = alocacaoAtualizadaDto.dataAgendamento;
+        alocacaoAtualizada.horario_inicio = alocacaoAtualizadaDto.horario_inicio;
+        alocacaoAtualizada.horario_fim = alocacaoAtualizadaDto.horario_fim;
+        
+        
         
         context.Alocacoes.Update(alocacaoAtualizada);
         context.SaveChanges();
@@ -188,7 +165,47 @@ public class AlocacaoUseCases(Context context)
         return Result<Alocacao>.Success(alocacaoAtualizada,200);
     }
     
-    
+    public Result<Alocacao> AtualizarStatus(int id, string status,string nome)
+    {
+        var alocacao = context.Alocacoes.FirstOrDefault(a => a.id == id);
+        
+        if (Enum.TryParse<StatusAlocacao>(status, true, out StatusAlocacao resultado))
+        {
+            status = resultado.ToString();
+        }
+        else
+        {
+            status = nameof(StatusAlocacao.Pendente);
+        }
+
+        alocacao.status = status;
+        
+        var user = context.Usuarios.FirstOrDefault(u => u.nome == nome);
+        
+        
+        if (!labComportsStudents(alocacao) || !labHasTheRequiredApps(alocacao))
+        {
+            alocacao.status = nameof(StatusAlocacao.Negado);
+        }
+        
+
+        if (alocacao.status == nameof(StatusAlocacao.Aprovado))
+        {
+            alocacao.aprovado_por_id = user.id;
+            alocacao.data_aprovacao = DateOnly.FromDateTime(DateTime.Now);
+        }
+        else
+        {
+            alocacao.aprovado_por_id = null;
+            alocacao.data_aprovacao = null;
+        }
+        
+        context.Alocacoes.Update(alocacao);
+        context.SaveChanges();
+        
+        
+        return Result<Alocacao>.Success(alocacao,200);
+    }
 
     private bool IsTheDayValid(string diaFormatado)
     {
@@ -211,10 +228,10 @@ public class AlocacaoUseCases(Context context)
         return Regex.Replace(dateName,pattern, replacement: "").ToLower();
     }
 
-    private bool labHasTheRequiredApps(AlocacaoAtualizadaDTO alocacaoAtualizadaDto)
+    private bool labHasTheRequiredApps(Alocacao alocacao)
     {
         var appsrequeridos = context.DisciplinaAplicativos
-            .Where(da => da.disciplina_id == alocacaoAtualizadaDto.disciplina_id)
+            .Where(da => da.disciplina_id == alocacao.disciplina_id)
             .Select(da => da.aplicativo_id).ToList();
         
         if (!appsrequeridos.Any())
@@ -223,22 +240,24 @@ public class AlocacaoUseCases(Context context)
         }
 
         var appsnolab = context.LaboratorioAplicativos
-            .Where(la => la.laboratorio_id == alocacaoAtualizadaDto.laboratorio_id)
+            .Where(la => la.laboratorio_id == alocacao.laboratorio_id)
             .Select(la => la.aplicativo_id).ToList();
 
         
         return appsrequeridos.All(requeridos => appsnolab.Contains(requeridos));
         
     }
+    
+    
 
-    private bool labComportsStudents(AlocacaoAtualizadaDTO alocacaoAtualizadaDto)
+    private bool labComportsStudents(Alocacao alocacao)
     {
         var pcs = context.Laboratorios
-            .Where(l => l.id == alocacaoAtualizadaDto.laboratorio_id)
+            .Where(l => l.id == alocacao.laboratorio_id)
             .Select(l => l.qnt_computadores).FirstOrDefault();
 
         var alunos = context.Disciplinas
-            .Where(d => d.id == alocacaoAtualizadaDto.disciplina_id)
+            .Where(d => d.id == alocacao.disciplina_id)
             .Select(d => d.alunos_matriculados).FirstOrDefault();
 
         if (pcs == 0)

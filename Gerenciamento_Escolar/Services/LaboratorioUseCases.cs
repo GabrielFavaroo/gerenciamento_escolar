@@ -43,76 +43,85 @@ public class LaboratorioUseCases(Context context)
 
     public Result<Laboratorio> atualizar(int id, LaboratorioDTO laboratorioDto)
     {
-        var laboratorio = new Laboratorio(id, laboratorioDto.nome, laboratorioDto.qnt_computadores);
-        context.Laboratorios.Update(laboratorio);
+        var laboratorio = context.Laboratorios.FirstOrDefault(l => l.id == id);
+        laboratorio.qnt_computadores = laboratorioDto.qnt_computadores;
+        laboratorio.nome = laboratorioDto.nome;
+            context.Laboratorios.Update(laboratorio);
         context.SaveChanges();
         return Result<Laboratorio>.Success(laboratorio, 200);
     }
 
     public Result<string> vincular(VincularAppsNoLaboratorioDTO laboratorioDto)
     {
+        var laboratorio = context.Laboratorios.FirstOrDefault(d => d.nome == laboratorioDto.laboratorio);
+        
+        if (laboratorio == null)
+        {
+            return Result<string>.Failure("Laboratorio não encontrado", 404);
+        }
 
-            if (!context.Laboratorios.Any(la => la.id == laboratorioDto.laboratorioId))
+        var appsLimpos = laboratorioDto.aplicativos.Distinct().ToList();
+
+        if (appsLimpos.Any())
+        {
+            var appsNoBanco = context.Aplicativos
+                .Where(app => appsLimpos.Contains(app.nome))
+                .Select(app => new { app.id, app.nome })
+                .ToList();
+
+            if (appsNoBanco.Count != appsLimpos.Count)
             {
-                return Result<string>.Failure("Laboratorio não encontrado", 404);
+                var nomesEncontrados = appsNoBanco.Select(a => a.nome).ToList();
+                var appFaltante = appsLimpos.FirstOrDefault(nome => !nomesEncontrados.Contains(nome));
+
+                return Result<string>.Failure($"O aplicativo '{appFaltante}' não foi encontrado no sistema", 404);
             }
 
-            var appsLimpos = laboratorioDto.idsDeAplicativos.Distinct().ToList();
+            var idsAppsJaVinculados = context.LaboratorioAplicativos.Where(da => da.laboratorio_id == laboratorio.id)
+                .Select(da => da.aplicativo_id).ToList();
+            
+            var idsDosApps = appsNoBanco.Select(a => a.id).ToList();
 
-            if (appsLimpos.Any())
+            var appsRestantes = idsDosApps.Except(idsAppsJaVinculados);
+            
+            foreach (var idApp in appsRestantes)
             {
-                var appsEncontrados = context.Aplicativos.Count(a => appsLimpos.Contains(a.id));
-                if (appsEncontrados != appsLimpos.Count)
-                {
-                    return Result<string>.Failure("Um ou mais aplicativos não foram encontrados", 404);
-                }
-
+                var vinculo = new Laboratorio_Aplicativo(laboratorio.id, idApp);
+                
+                context.LaboratorioAplicativos.Add(vinculo);
             }
-
-            var appsExistentes = context.LaboratorioAplicativos
-                .Where(da => da.laboratorio_id == laboratorioDto.laboratorioId).ToList();
-
-            var idsAtuais = appsExistentes.Select(e => e.aplicativo_id).ToList();
-
-            var appsRemover = appsExistentes.Where(atual => !appsLimpos.Contains(atual.aplicativo_id)).ToList();
-
-
-            var add = appsLimpos
-                .Where(id => !idsAtuais.Contains(id))
-                .Select(id =>
-                    new Laboratorio_Aplicativo(laboratorio_id: laboratorioDto.laboratorioId, id)).ToList();
-
-            if (appsRemover.Any()) context.LaboratorioAplicativos.RemoveRange(appsRemover);
-
-            if (add.Any()) context.LaboratorioAplicativos.AddRange(add);
-
-            context.SaveChanges();
+        }
+        
+        
+        context.SaveChanges();
 
             return Result<string>.Success("Aplicativos vinculados no laboratorio", 200);
         
     }
     
     
-    public Result<ListaDeAplicativosVinculadosDTO> consultarApps(int id, int pagina, int quantidade)
+    public Result<ListaGeralLaboratoriosComAppsDTO> consultarApps(int pagina, int quantidade)
     {
-        var laboratorio = context.Laboratorios.Find(id);
-        if (laboratorio == null)
-        {
-            return Result<ListaDeAplicativosVinculadosDTO>.Failure("Laboratorio não encontrado", 404);
-        }
-        
-        var apps = context.LaboratorioAplicativos
-            .Where(l => l.laboratorio_id == id)
+        var labsComApps = context.Laboratorios
             .Skip((pagina - 1) * quantidade)
             .Take(quantidade)
-            .Select(da => new AplicativoVinculadoDTO(
-                da.aplicativo_id,
-                da.aplicativo.nome)).ToList();
-            
-            
-        
-        return Result<ListaDeAplicativosVinculadosDTO>.Success(new ListaDeAplicativosVinculadosDTO(pagina,quantidade, apps),200);
-    }
+            .Select(d => new LaboratorioItensComAppsDTO(
+                d.id,
+                d.nome,
+                d.qnt_computadores,
+                context.LaboratorioAplicativos
+                    .Where(la => la.laboratorio_id == d.id)
+                    .Select(da => new AplicativoVinculadoDTO(
+                        da.aplicativo_id,
+                        da.aplicativo.nome
+                    ))
+                    .ToList()
+            ))
+            .ToList();
+
+        var resultado = new ListaGeralLaboratoriosComAppsDTO(pagina, quantidade, labsComApps);
+    
+        return Result<ListaGeralLaboratoriosComAppsDTO>.Success(resultado, 200);}
 }
     
 
